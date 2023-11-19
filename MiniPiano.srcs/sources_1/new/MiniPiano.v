@@ -6,8 +6,10 @@ module MiniPiano(
     input wire [1:0] _mode, // 11 InController, 10 AutoController, 01 LearnController
     input wire up,
     input wire down,
-    output wire speaker
+    output wire speaker,
+    output wire md
 );  
+    assign md = 1'b1;
     reg [4:0] note;
     wire [4:0] noteIn;
     wire [4:0] noteAuto;
