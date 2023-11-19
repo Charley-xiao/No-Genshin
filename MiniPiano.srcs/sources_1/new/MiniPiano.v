@@ -7,7 +7,8 @@ module MiniPiano(
     input wire up,
     input wire down,
     output wire speaker,
-    output wire md
+    output wire md,
+    output [6:0] led
 );  
     assign md = 1'b1;
     reg [4:0] note;
@@ -30,7 +31,7 @@ module MiniPiano(
         else if(_mode == 2'b10) note = noteAuto;
         else note = noteIn;
     end
-    Buzzer buzzer(clk, note, speaker);
+    Buzzer buzzer(clk, note,led, speaker);
     InController inController(sel, octave,_mode,noteIn);
     AutoController autoController(clk,num,_mode,noteAuto);
 endmodule

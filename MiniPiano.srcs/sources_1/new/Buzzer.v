@@ -1,5 +1,10 @@
 `timescale 1ns / 1ps
-module Buzzer(input wire clk, input wire [4:0] note, output wire speaker);
+module Buzzer(
+    input wire clk, 
+    input wire [4:0] note, 
+    output reg [6:0] led,
+    output wire speaker
+);
     reg pwm;
     wire [31:0] notes[24:0];
     reg [31:0] counter;
@@ -57,6 +62,36 @@ module Buzzer(input wire clk, input wire [4:0] note, output wire speaker);
             pwm = ~pwm;
             counter <= 0;
         end
+    end
+    
+    always @(*) begin 
+        case(note) 
+            5'd0: led = 7'b0000000;
+            5'd1: led = 7'b1000000;
+            5'd2: led = 7'b0100000;
+            5'd3: led = 7'b0010000;
+            5'd4: led = 7'b0001000;
+            5'd5: led = 7'b0000100;
+            5'd6: led = 7'b0000010;
+            5'd7: led = 7'b0000001;
+            5'd8: led = 7'b0000000;
+            5'd9: led = 7'b1000000;
+            5'd10: led = 7'b0100000;
+            5'd11: led = 7'b0010000;
+            5'd12: led = 7'b0001000;
+            5'd13: led = 7'b0000100;
+            5'd14: led = 7'b0000010;
+            5'd15: led = 7'b0000001;
+            5'd16: led = 7'b0000000;
+            5'd17: led = 7'b1000000;
+            5'd18: led = 7'b0100000;
+            5'd19: led = 7'b0010000;
+            5'd20: led = 7'b0001000;
+            5'd21: led = 7'b0000100;
+            5'd22: led = 7'b0000010;
+            5'd23: led = 7'b0000001;
+            default: led = 7'b0000000;
+        endcase
     end
 
     assign speaker = pwm;
