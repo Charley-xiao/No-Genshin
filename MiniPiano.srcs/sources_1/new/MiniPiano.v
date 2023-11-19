@@ -12,10 +12,16 @@ module MiniPiano(
     wire [4:0] noteIn;
     wire [4:0] noteAuto;
     reg [6:0] num;
+    integer MAX_PIECES = 1;
+    initial begin 
+        num = 0;
+    end
     always @(*) begin
         // TODO change music id but currently buggy
         if(up == 1'b1) num = num + 1'b1;
         if(down == 1'b1) num = num - 1'b1;
+        if(num < 0) num = MAX_PIECES;
+        if(num > MAX_PIECES || num == MAX_PIECES) num = 0;
     end
     always @(*) begin 
         if(_mode == 2'b11) note = noteIn;
