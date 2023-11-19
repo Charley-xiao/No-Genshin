@@ -42,6 +42,7 @@ Temporary Items
 #Exclude all
 *
 !*/
+!.gitattributes
 !.gitignore
 ###########################################################################
 ##	VIVADO
@@ -134,3 +135,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/vivado,xilinxvivado,macos,windows
 
+MiniPiano.cache/wt/webtalk_pa.xml
