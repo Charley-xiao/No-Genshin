@@ -51,7 +51,7 @@ module Buzzer(input wire clk, input wire [4:0] note, output wire speaker);
     end
 
     always @(posedge clk) begin
-        if(counter < notes[note] || note == 5'b00000 || note == 5'b01000 || note == 5'b10000) begin
+        if(note == 5'b00000 || note == 5'b01000 || note == 5'b10000 || counter < notes[note]) begin
             counter <= counter + 1'b1;
         end else begin
             pwm = ~pwm;
