@@ -9,7 +9,7 @@ module AutoController(
     wire [300:0] len;
     reg [31:0] counter;
     reg [31:0] rest_counter;
-    reg [31:0] mlen;
+    wire [31:0] mlen;
     reg [31:0] i;
 
     Library lib(num,pcs,len,mlen);
