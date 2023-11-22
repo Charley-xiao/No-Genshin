@@ -15,7 +15,7 @@ module MiniPiano(
     wire [4:0] noteIn;
     wire [4:0] noteAuto;
     reg [6:0] num;
-    integer MAX_PIECES = 1;
+    integer MAX_PIECES = 4;
     initial begin 
         num = 0;
     end
