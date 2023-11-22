@@ -5,8 +5,8 @@ module AutoController(
     input [1:0] _mode,
     output reg [4:0] note
 );
-    wire [300:0] pcs;
-    wire [300:0] len;
+    wire [3000:0] pcs;
+    wire [3000:0] len;
     reg [31:0] counter;
     reg [31:0] rest_counter;
     wire [31:0] mlen;

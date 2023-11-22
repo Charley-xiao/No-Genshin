@@ -1,12 +1,12 @@
 module Library(
     input [6:0] num,
-    output [300:0] pcs,
-    output [300:0] len,
+    output [3000:0] pcs,
+    output [3000:0] len,
     output [31:0] mlen
 );
-    wire [300:0] pcs_array[65:0];
-    wire [300:0] len_array[65:0];
-    wire [6:0] is_array[65:0];
+    wire [3000:0] pcs_array[65:0];
+    wire [3000:0] len_array[65:0];
+    wire [31:0] is_array[65:0];
     wire [2:0] scale_array[65:0];
 //C Major 
 //1 c2
