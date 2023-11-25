@@ -1,18 +1,20 @@
 module Library(
     input [6:0] num,
-    output [3000:0] pcs,
-    output [3000:0] len,
-    output [31:0] mlen
+    output wire [700:0] pcs,
+    output wire [300:0] len,
+    output wire [6:0] is,
+    output wire [2:0] scale
 );
-    wire [3000:0] pcs_array[65:0];
-    wire [3000:0] len_array[65:0];
-    wire [31:0] is_array[65:0];
+
+    wire [300:0] pcs_array[65:0];
+    wire [300:0] len_array[65:0];
+    wire [6:0] is_array[65:0];
     wire [2:0] scale_array[65:0];
 //C Major 
 //1 c2
 //9 c3
 //17 c4
-
+//有的曲子写的程序跑不出来，只能手扒了qwq
     // Little Star(C 4/4)
     assign pcs_array[0] = 210'b10001_10001_10101_10101_10110_10110_10101_10100_10100_10011_10011_10010_10010_10001_10101_10101_10100_10100_10011_10011_10010_10101_10101_10100_10100_10011_10011_10010_10001_10001_10101_10101_10110_10110_10101_10100_10100_10011_10011_10010_10010_10001;
     assign len_array[0] =  84'b01_01_01_01_01_01_00_01_01_01_01_01_01_00_01_01_01_01_01_01_00_01_01_01_01_01_01_00_01_01_01_01_01_01_00_01_01_01_01_01_01_00;
@@ -36,12 +38,13 @@ module Library(
     assign is_array[3]=138;
     assign scale_array[3]=3'b000;
 //   Add other songs here, like:
-//  assign pcs_array[3]
-//  assign len_array[3]
-//  assign is_array[3]
-//  assign scale_array[3]
+//  assign pcs_array[4]
+//  assign len_array[4]
+//  assign is_array[4]
+//  assign scale_array[4]
     // Selector
     assign pcs = pcs_array[num];
     assign len = len_array[num];
-    assign mlen = is_array[num];
+    assign is = is_array[num];
+    assign scale = scale_array[num];
 endmodule

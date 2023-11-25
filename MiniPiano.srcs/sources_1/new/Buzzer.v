@@ -2,68 +2,92 @@
 module Buzzer(
     input wire clk, 
     input wire [4:0] note, 
+    input wire [2:0] scale,//what tune?details in library。need to complete in incontroller
     output reg [6:0] led,
     output wire speaker
 );
     reg pwm;
-    wire [31:0] notes[24:0];
+    wire [31:0]Cnotes[32:0];wire [31:0] Fnotes[32:0]; wire [31:0] Bnotes[32:0];
+    
     reg [31:0] counter;
+    reg [31:0] notes[32:0];
     // C3
-    assign notes[1] = 764525;
+    assign Cnotes[1] = 764525; assign Fnotes[1]=2290950; assign Bnotes[1]=1619695;
     // D3
-    assign notes[2] = 681198;
+    assign Cnotes[2] = 681198;  assign Fnotes[2]=2041232; assign Bnotes[2]=1528818;
     // E3
-    assign notes[3] = 606796;
+    assign Cnotes[3] = 606796; assign Fnotes[3]=1818182; assign Bnotes[3]=1443001;
     // F3
-    assign notes[4] = 572737;
+    assign Cnotes[4] = 572737; assign Fnotes[4]=17716148; assign Bnotes[4]=1362026;
     // G3
-    assign notes[5] = 510284;
+    assign Cnotes[5] = 510284; assign Fnotes[5]=1528818; assign Bnotes[5]=1285677;
     // A3
-    assign notes[6] = 454545;
-    // B3
-    assign notes[7] = 405022;
+    assign Cnotes[6] = 454545; assign Fnotes[6]=1362026; assign Bnotes[6]=1213445;
+    // B3 
+    assign Cnotes[7] = 405022;assign Fnotes[7]=1213445; assign Bnotes[7]=1145344;
     // C4
-    assign notes[9] = 382262;
+    assign Cnotes[9] = 382262;assign Fnotes[9]=1145344; assign Bnotes[9]=809913;
     // D4
-    assign notes[10] = 340599;
+    assign Cnotes[10] = 340599;assign Fnotes[10]=1020512; assign Bnotes[10]=764467;
     // E4
-    assign notes[11] = 303398;
+    assign Cnotes[11] = 303398;assign Fnotes[11]=909091; assign Bnotes[11]=721552;
     // F4
-    assign notes[12] = 286368;
+    assign Cnotes[12] = 286368;assign Fnotes[12]=858074;assign Bnotes[12]=681046;
     // G4
-    assign notes[13] = 255102;
+    assign Cnotes[13] = 255102;assign Fnotes[13]=764468;assign Bnotes[13]=642881;
     // A4
-    assign notes[14] = 227272;
+    assign Cnotes[14] = 227272;assign Fnotes[14]=681060;assign Bnotes[14]=606810;
     // B4
-    assign notes[15] = 202511;
+    assign Cnotes[15] = 202511;assign Fnotes[15]=606759;assign Bnotes[15]=572710;
     // C5
-    assign notes[17] = 191131;
+    assign Cnotes[17] = 191131;assign Fnotes[17]=566861;assign Bnotes[17]=405073;
     // D5
-    assign notes[18] = 170300;
+    assign Cnotes[18] = 170300;assign Fnotes[18]=510230;assign Bnotes[18]=382230;
     // E5
-    assign notes[19] = 151699;
+    assign Cnotes[19] = 151699;assign Fnotes[19]=454545;assign Bnotes[19]=360776;
     // F5
-    assign notes[20] = 143184;
+    assign Cnotes[20] = 143184;assign Fnotes[20]=429037;assign Bnotes[20]=340523;
     // G5
-    assign notes[21] = 127551;
+    assign Cnotes[21] = 127551;assign Fnotes[21]=382219;assign Bnotes[21]=321441;
     // A5
-    assign notes[22] = 113636;
+    assign Cnotes[22] = 113636;assign Fnotes[22]=340529;assign Bnotes[22]=303405;
     // B5
-    assign notes[23] = 101255;
+    assign Cnotes[23] = 101255;assign Fnotes[23]=303370;assign Bnotes[23]=286355;
+    //C6
+    assign Cnotes[25] = 95566;assign Fnotes[25]=286344;assign Bnotes[25]=202536;
+    // D6
+    assign Cnotes[26] = 85150;assign Fnotes[26]=255108;assign Bnotes[26]=191115;
+    // E6
+    assign Cnotes[27] =75850;assign Fnotes[27]=227273;assign Bnotes[27]=180388;
+    // F6
+    assign Cnotes[28] = 71592;assign Fnotes[28]=214519;assign Bnotes[28]=170261;
+    //G6
+    assign Cnotes[29] = 63776;assign Fnotes[29]=191113;assign Bnotes[29]=160720;
+    //A6
+    assign Cnotes[30] = 56818;assign Fnotes[30]=170262;assign Bnotes[30]=151702;
+    //B6
+    assign Cnotes[31] =50628;assign Fnotes[31]=151685;assign Bnotes[31]=143177;
 
     initial begin
         pwm = 0;
-    end
-
+    end;
+    
+    integer i;
     always @(posedge clk) begin
-        if(note == 5'b00000 || note == 5'b01000 || note == 5'b10000 || counter < notes[note]) begin
+            case(scale)
+                3'b000: for (i = 1; i < 32; i = i + 1) notes[i] = Cnotes[i];
+                3'b001: for (i = 1; i < 32; i = i + 1) notes[i] = Fnotes[i];
+                3'b010: for (i = 1; i < 32; i = i + 1) notes[i] = Bnotes[i];
+                // Add more cases as needed
+            endcase
+        
+      if(note == 5'b00000 || note == 5'b01000 || note == 5'b10000 || counter <notes[note]) begin
             counter <= counter + 1'b1;
         end else begin
             pwm = ~pwm;
             counter <= 0;
         end
     end
-    
     always @(*) begin 
         case(note) 
             5'd0: led = 7'b0000000;
@@ -90,6 +114,15 @@ module Buzzer(
             5'd21: led = 7'b0000100;
             5'd22: led = 7'b0000010;
             5'd23: led = 7'b0000001;
+            5'd24: led = 7'b0000000;
+            5'd25: led = 7'b1000000;
+            5'd26: led = 7'b0100000;
+            5'd27: led = 7'b0010000;
+            5'd28: led = 7'b0001000;
+            5'd29: led = 7'b0000100;
+            5'd30: led = 7'b0000010;
+            5'd31: led = 7'b0000001;
+       
             default: led = 7'b0000000;
         endcase
     end
