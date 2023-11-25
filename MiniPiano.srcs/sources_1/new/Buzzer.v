@@ -18,7 +18,7 @@ module Buzzer(
     // E3
     assign Cnotes[3] = 606796; assign Fnotes[3]=1818182; assign Bnotes[3]=1443001;
     // F3
-    assign Cnotes[4] = 572737; assign Fnotes[4]=17716148; assign Bnotes[4]=1362026;
+    assign Cnotes[4] = 572736; assign Fnotes[4]=17716148; assign Bnotes[4]=1362026;
     // G3
     assign Cnotes[5] = 510284; assign Fnotes[5]=1528818; assign Bnotes[5]=1285677;
     // A3

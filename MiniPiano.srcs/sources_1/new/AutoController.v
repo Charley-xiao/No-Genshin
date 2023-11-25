@@ -1,26 +1,35 @@
 module AutoController(
+    input rset,
     input clk,
     input [6:0] num,
     input [1:0] _mode,
-    output reg [4:0] note,
-    output wire [2:0] scale//control the tune of pieces,details in library
+    output reg [4:0] note
 );
-    wire [300:0] pcs;
+    reg mrset;
+    initial begin mrset = 0; end
+    wire [700:0] pcs;
     wire [300:0] len;
     wire [6:0] is;
     reg [31:0] counter;
     reg [31:0] rest_counter;
     integer i;
+    wire [2:0] scale;
+    wire [2:0] pseudo;
+    assign scale = 3'b000;
 
-    MusicLibrary ml(
+    Library ml(
         .num(num),
         .pcs(pcs),
         .len(len),
-        .scale(scale),
+        .scale(pseudo),
         .is(is)
     );
-//how to translate（pass） scale from ml to buzzer?（s3 and s0）
+//how to translate（pass�? scale from ml to buzzer?（s3 and s0�?
     always @(posedge clk) begin
+        if(mrset != rset) begin 
+            i <= is;
+            mrset <= rset;
+        end
         if(_mode == 2'b10) begin
             if (counter == 0) begin
                 i <= is;
