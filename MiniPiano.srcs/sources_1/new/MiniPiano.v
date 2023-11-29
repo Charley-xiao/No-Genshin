@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "define.v"
 module MiniPiano(
     input wire clk,
     input wire [6:0] sel,
@@ -34,26 +35,25 @@ module MiniPiano(
         rset = 1'b0;
     end
     always @(debounced_butscale) begin 
-    if(debounced_butscale==1'b1)begin 
-                    scale = scale +1'b1;
-                    if(scale>= MAX_SCALE) scale=3'b000;
-                    end
+        if(debounced_butscale==1'b1) begin 
+            scale = scale +1'b1;
+            if(scale>= MAX_SCALE) scale=3'b000;
+        end
     end
-       always @(posedge debounced_up) begin
-                
-            if (debounced_up == 1'b1) begin
-                if (num >= MAX_PIECES-1) num =1'b0;
-                else num = num + 1'b1;
-                rset = ~rset;
-            end
-           
+    always @(posedge debounced_up) begin    
+        if (debounced_up == 1'b1) begin
+            if (num >= MAX_PIECES-1) num =1'b0;
+            else num = num + 1'b1;
+            rset = ~rset;
+        end     
     end
     always @(*) begin 
-        if(_mode == 2'b11) note = noteIn;
-        else if(_mode == 2'b10) note = noteAuto;
+        if(_mode == `M_IN) note = noteIn;
+        else if(_mode == `M_AUTO) note = noteAuto;
+        else if(_mode == `M_LEARN) ;//need add learn then
         else note = noteIn;
     end
     Buzzer buzzer(clk, note,scale,led, speaker);
-    InController inController(sel, octave,_mode,noteIn);//add scale or notï¼?
+    InController inController(sel, octave,_mode,noteIn);//add scale or not
     AutoController autoController(rset,clk,num,_mode,noteAuto);
 endmodule

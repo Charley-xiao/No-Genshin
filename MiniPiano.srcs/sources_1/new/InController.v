@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "define.v"
 module InController(
     input [6:0] sel,
     input [1:0] octave,
@@ -10,7 +11,7 @@ module InController(
         _oct = (octave == 2'b00) ? 5'b00000 : (
             (octave == 2'b01) ? 5'b01000 : 5'b10000
         );  
-        if(_mode == 2'b11) begin
+        if(_mode == `M_IN) begin
             case(sel)
                 7'b0000001: note = 5'b00001 + _oct;
                 7'b0000010: note = 5'b00010 + _oct;

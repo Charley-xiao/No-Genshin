@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+`include "define.v"
 module AutoController(
     input rset,
     input clk,
@@ -30,7 +32,7 @@ module AutoController(
             i <= is;
             mrset <= rset;
         end
-        if(_mode == 2'b10) begin
+        if(_mode == `M_AUTO) begin
             if (counter == 0) begin
                 i <= is;
                 note <= pcs[i*5 +: 5];
