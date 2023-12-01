@@ -10,14 +10,17 @@ module MiniPiano(
     output wire speaker,
     output wire md,
     output [6:0] led,
-    output [7:0] seg_out,
-    output tub_sel1
+    output [7:0] seg_out0,
+    output [3:0] tub_sel0,
+    output [7:0] seg_out1,
+    output [3:0] tub_sel1
 );  
     assign md = 1'b1;
     reg rset;
     reg [4:0] note;
     wire [4:0] noteIn;
     wire [4:0] noteAuto;
+    wire [4:0] noteLearn;
     reg [6:0] num;
     reg [2:0] scale;
     integer MAX_PIECES = 3'b100;
@@ -28,7 +31,10 @@ module MiniPiano(
     debouncer d2(clk,butscale,debounced_butscale);
     wire seg_rset;
     assign seg_rset = 1'b0;
-    light_7seg_ego ___(.sw(num),.seg_out(seg_out),.rst(seg_rset),._mode(_mode),.tub_sel(tub_sel1));
+    //light_7seg_ego ___(.sw(num),.seg_out(seg_out),.rst(seg_rset),._mode(_mode),.tub_sel(tub_sel1));
+    wire [31:0] val_7seg;
+    light_val_controller ctrl_val(_mode,num,val_7seg);
+    light_7seg_manager manager_7seg(val_7seg,seg_rset,clk,seg_out0,tub_sel0,seg_out1,tub_sel1);
     initial begin 
         num = 0;
         scale=3'b000;
@@ -50,10 +56,11 @@ module MiniPiano(
     always @(*) begin 
         if(_mode == `M_IN) note = noteIn;
         else if(_mode == `M_AUTO) note = noteAuto;
-        else if(_mode == `M_LEARN) ;//need add learn then
+        else if(_mode == `M_LEARN) note = noteLearn;//need add learn then
         else note = noteIn;
     end
     Buzzer buzzer(clk, note,scale,led, speaker);
     InController inController(sel, octave,_mode,noteIn);//add scale or not
     AutoController autoController(rset,clk,num,_mode,noteAuto);
+    LearnController learnController(rset,clk,num,_mode,sel,noteLearn);
 endmodule
