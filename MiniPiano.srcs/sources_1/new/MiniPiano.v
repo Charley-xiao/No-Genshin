@@ -34,7 +34,7 @@ module MiniPiano(
     //light_7seg_ego ___(.sw(num),.seg_out(seg_out),.rst(seg_rset),._mode(_mode),.tub_sel(tub_sel1));
     wire [31:0] val_7seg;
     light_val_controller ctrl_val(_mode,num,val_7seg);
-    light_7seg_manager manager_7seg(val_7seg,seg_rset,clk,seg_out0,tub_sel0,seg_out1,tub_sel1);
+    light_7seg_manager manager_7seg(val_7seg,seg_rset,clk,_mode,seg_out0,tub_sel0,seg_out1,tub_sel1);
     initial begin 
         num = 0;
         scale=3'b000;

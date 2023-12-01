@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "define.v"
 module light_val_controller(
-    input _mode,
+    input [1:0] _mode,
     input [6:0] num,
     output reg [31:0] val_7seg
     );

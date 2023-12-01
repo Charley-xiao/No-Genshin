@@ -3,13 +3,19 @@ module light_7seg_manager(
     input [31:0] val,
     input rst,
     input clk,
-    output reg [7:0] seg_out0,
+    input [1:0] _mode,
+    output [7:0] seg_out0,
     output reg [3:0] tub_sel0,
-    output reg [7:0] seg_out1,
+    output [7:0] seg_out1,
     output reg [3:0] tub_sel1
     );
     
     reg [63:0] timer;
+    reg [3:0] sw0, sw1;
+    
+    light_7seg_ego slv0(sw0, rst, _mode, seg_out0);
+    light_7seg_ego slv1(sw1, rst, _mode, seg_out1);
+    
     always @(posedge clk or negedge rst)
     begin
         if(~rst) timer <= 64'd0;
@@ -22,32 +28,32 @@ module light_7seg_manager(
         if(~rst) begin
             tub_sel0 = 4'b0;
             tub_sel1 = 4'b0;
-            seg_out0 = 8'b0;
-            seg_out1 = 8'b1;
+            sw0 = 4'b0;
+            sw1 = 4'b0;
          end 
          else if(timer <= 64'd249999) begin
             tub_sel0 = 4'b0001;
-            seg_out0 = val[3:0];
+            sw0 = val[3:0];
             tub_sel1 = 4'b0001;
-            seg_out1 = val[19:16];
+            sw1 = val[19:16];
          end
          else if(timer <= 64'd499999) begin
             tub_sel0 = 4'b0010;
-            seg_out0 = val[7:4];
+            sw0 = val[7:4];
             tub_sel1 = 4'b0010;
-            seg_out1 = val[23:20];
+            sw1 = val[23:20];
          end   
          else if(timer <= 64'd749999) begin
             tub_sel0 = 4'b0100;
-            seg_out0 = val[11:8];
+            sw0 = val[11:8];
             tub_sel1 = 4'b0100;
-            seg_out1 = val[27:24];
+            sw1 = val[27:24];
          end        
          else if(timer <= 64'd999999) begin
             tub_sel0 = 4'b1000;
-            seg_out0 = val[15:12];
+            sw0 = val[15:12];
             tub_sel1 = 4'b1000;
-            seg_out1 = val[31:28];
+            sw1 = val[31:28];
          end                           
      end       
     
