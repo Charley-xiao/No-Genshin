@@ -13,7 +13,12 @@ module MiniPiano(
     output [7:0] seg_out0,
     output [3:0] tub_sel0,
     output [7:0] seg_out1,
-    output [3:0] tub_sel1
+    output [3:0] tub_sel1,
+    output [3:0] red,
+        output [3:0] green,
+        output [3:0] blue,
+           output hs,
+         output vs
 );  
     assign md = 1'b1;
     reg rset;
@@ -60,7 +65,9 @@ module MiniPiano(
         else note = noteIn;
     end
     Buzzer buzzer(clk, note,scale,led, speaker);
+    vga v(.clk(clk), .rst(1'b1),  .mode(_mode), .r(red), .g(green), .b(blue), .vs(vs), .hs(hs));
+
     InController inController(sel, octave,_mode,noteIn);//add scale or not
     AutoController autoController(rset,clk,num,_mode,noteAuto);
-    LearnController learnController(rset,clk,num,_mode,sel,noteLearn);
+    //LearnController learnController(rset,clk,num,_mode,sel,noteLearn);
 endmodule
