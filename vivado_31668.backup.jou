@@ -1,0 +1,17 @@
+#-----------------------------------------------------------
+# Vivado v2017.4 (64-bit)
+# SW Build 2086221 on Fri Dec 15 20:55:39 MST 2017
+# IP Build 2085800 on Fri Dec 15 22:25:07 MST 2017
+# Start of session at: Fri Dec  1 22:30:19 2023
+# Process ID: 31668
+# Current directory: D:/verilogproj/MiniPiano/No-Genshin
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent27800 D:\verilogproj\MiniPiano\No-Genshin\MiniPiano.xpr
+# Log file: D:/verilogproj/MiniPiano/No-Genshin/vivado.log
+# Journal file: D:/verilogproj/MiniPiano/No-Genshin\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project D:/verilogproj/MiniPiano/No-Genshin/MiniPiano.xpr
+update_compile_order -fileset sources_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
+wait_on_run impl_1

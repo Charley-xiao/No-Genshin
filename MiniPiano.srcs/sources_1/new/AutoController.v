@@ -11,13 +11,13 @@ module AutoController(
     initial begin mrset = 0; end
     wire [700:0] pcs;
     wire [300:0] len;
-    wire [6:0] is;
+    wire [7:0] is;
     reg [31:0] counter;
     reg [31:0] rest_counter;
     integer i;
-    wire [2:0] scale;
+
     wire [2:0] pseudo;
-    assign scale = 3'b000;
+  
 
     Library ml(
         .num(num),
@@ -26,6 +26,7 @@ module AutoController(
         .scale(pseudo),
         .is(is)
     );
+ 
 //how to translateï¼ˆpassï¼? scale from ml to buzzer?ï¼ˆs3 and s0ï¼?
     always @(posedge clk) begin
         if(mrset != rset) begin 

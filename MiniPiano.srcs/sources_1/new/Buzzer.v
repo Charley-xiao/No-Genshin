@@ -1,5 +1,8 @@
 `timescale 1ns / 1ps
+
 module Buzzer(
+    input wire play,
+    input wire [1:0] _mode,
     input wire clk, 
     input wire [4:0] note, 
     input wire [2:0] scale,//what tune?details in library。need to complete in incontroller
@@ -84,9 +87,11 @@ module Buzzer(
       if(note == 5'b00000 || note == 5'b01000 || note == 5'b10000 || counter <notes[note]) begin
             counter <= counter + 1'b1;
         end else begin
-            pwm = ~pwm;
+        if ((_mode !=`M_LEARN)||(_mode == `M_LEARN && play==1'b1)) begin
+             pwm <= ~pwm;
             counter <= 0;
         end
+    end
     end
     always @(*) begin 
         case(note) 

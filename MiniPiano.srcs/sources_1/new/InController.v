@@ -22,6 +22,6 @@ module InController(
                 7'b1000000: note = 5'b00111 + _oct;
                 default: note = 5'b00000 + _oct;
             endcase
-        end
+        end else note = 5'b00000;
     end
 endmodule
