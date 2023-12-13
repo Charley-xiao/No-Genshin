@@ -5,11 +5,12 @@ module Buzzer(
     input wire [1:0] _mode,
     input wire clk, 
     input wire [4:0] note, 
-    input wire [2:0] scale,//what tune?details in library。need to complete in incontroller
-    output reg [6:0] led,
+    input wire [2:0] scale,
+    output reg [6:0] led, 
     output wire speaker
 );
     reg pwm;
+    // C for normal, and F for sharp (#), B for flat (b)
     wire [31:0]Cnotes[32:0];wire [31:0] Fnotes[32:0]; wire [31:0] Bnotes[32:0];
     
     reg [31:0] counter;
@@ -77,7 +78,7 @@ module Buzzer(
     
     integer i;
     always @(posedge clk) begin
-            case(scale)
+       case(scale)
                 3'b000: for (i = 1; i < 32; i = i + 1) notes[i] = Cnotes[i];
                 3'b001: for (i = 1; i < 32; i = i + 1) notes[i] = Fnotes[i];
                 3'b010: for (i = 1; i < 32; i = i + 1) notes[i] = Bnotes[i];
@@ -86,15 +87,14 @@ module Buzzer(
         
       if(note == 5'b00000 || note == 5'b01000 || note == 5'b10000 || counter <notes[note]) begin
             counter <= counter + 1'b1;
-        end else begin
+        end else begi`default_nettype none  
         if ((_mode !=`M_LEARN)||(_mode == `M_LEARN && play==1'b1)) begin
-             pwm <= ~pwm;
+            pwm <= ~pwm;//play it  
             counter <= 0;
         end
-    end
-    end
+    end 
     always @(*) begin 
-        case(note) 
+        case(note) //shine specific led
             5'd0: led = 7'b0000000;
             5'd1: led = 7'b1000000;
             5'd2: led = 7'b0100000;

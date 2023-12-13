@@ -8,11 +8,12 @@ module InController(
 );
     reg [4:0] _oct;
     always @(*) begin
-        _oct = (octave == 2'b00) ? 5'b00000 : (
-            (octave == 2'b01) ? 5'b01000 : 5'b10000
+        // octave change
+        _oct = (octave == `OCT_LOW) ? `OCT_LOW_P : (
+            (octave == `OCT_MID) ? `OCT_MID_P : `OCT_HGH_P
         );  
         if(_mode == `M_IN) begin
-            case(sel)
+            case(sel) //play with differect input
                 7'b0000001: note = 5'b00001 + _oct;
                 7'b0000010: note = 5'b00010 + _oct;
                 7'b0000100: note = 5'b00011 + _oct;
@@ -22,6 +23,6 @@ module InController(
                 7'b1000000: note = 5'b00111 + _oct;
                 default: note = 5'b00000 + _oct;
             endcase
-        end else note = 5'b00000;
+        end else note = 5'b00000;//not selected
     end
 endmodule

@@ -21,17 +21,17 @@ module led(
     reg [1:0] bit; 
     reg [3:0] hex_in;
     
-    always @ (posedge clk or negedge rst)   begin
-        if (!rst)   begin
+    always @ (posedge clk or negedge rst) begin
+        if (!rst) begin
             bit = 0;
-        end else if(bit==2'b10)begin
-            bit =0;
+        end else if (bit==2'b10) begin
+            bit = 0;
         end else begin
             bit = bit + 1;
         end
     end
 
-    always @ (*)    begin
+    always @ (*) begin
         case (bit)
             2'b00:  begin
                 an  <=  4'b001;
