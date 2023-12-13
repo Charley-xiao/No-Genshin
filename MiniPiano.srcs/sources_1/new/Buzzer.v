@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-
+`include "define.v"
 module Buzzer(
     input wire play,
     input wire [1:0] _mode,
@@ -74,7 +74,7 @@ module Buzzer(
 
     initial begin
         pwm = 0;
-    end;
+    end
     
     integer i;
     always @(posedge clk) begin
@@ -87,13 +87,14 @@ module Buzzer(
         
       if(note == 5'b00000 || note == 5'b01000 || note == 5'b10000 || counter <notes[note]) begin
             counter <= counter + 1'b1;
-        end else begi`default_nettype none  
+        end else begin  
         if ((_mode !=`M_LEARN)||(_mode == `M_LEARN && play==1'b1)) begin
             pwm <= ~pwm;//play it  
             counter <= 0;
         end
+        end
     end 
-    always @(*) begin 
+    always @(*) begin
         case(note) //shine specific led
             5'd0: led = 7'b0000000;
             5'd1: led = 7'b1000000;

@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "define.v"
 module light_7seg_manager (
     input [31:0] val,
     input rst,

@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="35" Path="C:/Users/Lenovo/Documents/GitHub/No-Genshin/MiniPiano.xpr">
+<Project Version="7" Minor="35" Path="C:/Users/Roderick/Documents/No-Genshin/MiniPiano.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="8aa173c375eb4ffcb56e743486873c42"/>
@@ -97,7 +97,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../../Downloads/SUSTech_CS207-DD_2022f_Project-a-real-car-main/SUSTech_CS207-DD_2022f_Project-a-real-car-main/sources/view/char_set.v">
+      <File Path="$PSRCDIR/sources_1/new/char_set.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -132,14 +132,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../../Downloads/SUSTech_CS207-DD_2022f_Project-a-real-car-main/SUSTech_CS207-DD_2022f_Project-a-real-car-main/sources/view/state_data_ctrl.v">
+      <File Path="$PSRCDIR/sources_1/new/state_data_ctrl.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../../Downloads/SUSTech_CS207-DD_2022f_Project-a-real-car-main/SUSTech_CS207-DD_2022f_Project-a-real-car-main/sources/view/vga.v">
+      <File Path="$PSRCDIR/sources_1/new/vga.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
