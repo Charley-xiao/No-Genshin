@@ -21,133 +21,135 @@ module MiniPiano (
     output hs,
     output vs
 );
-  assign md = 1'b1;
-  wire play;
-  reg rset;
-  reg [4:0] note;
-  wire [31:0] score;
-  wire [4:0] noteIn;
-  wire [4:0] noteAuto;
-  wire [4:0] noteLearn;
-  reg [6:0] num;
-  reg [2:0] scale;
-  integer MAX_PIECES = 3'b100;
-  integer MAX_SCALE = 3'b011;  //NEED TO ADJUST
+    assign md = 1'b0;
+    wire play;
+    reg rset;
+    reg [4:0] note;
+    wire [31:0] score;
+    wire [4:0] noteIn;
+    wire [4:0] noteAuto;
+    wire [4:0] noteLearn;
+    reg [6:0] num;
+    reg [2:0] scale;
+    integer MAX_PIECES = 3'b100;
+    integer MAX_SCALE = 3'b011;
 
-  // 7-segment tube adjustment
-  wire seg_rset;
-  assign seg_rset = 1'b0;
-  wire [31:0] val_7seg;
-  light_val_controller ctrl_val (
-      _mode,
-      num,
-      score,
-      val_7seg
-  );
-  light_7seg_manager manager_7seg (
-      val_7seg,
-      seg_rset,
-      clk,
-      _mode,
-      seg_out0,
-      tub_sel0,
-      seg_out1,
-      tub_sel1
-  );
-  initial begin
-    num   = 0;
-    scale = 3'b000;
-    rset  = 1'b0;
-  end
-
-  //debouncers
-  wire debounced_down;
-  wire debounced_up;
-  wire debounced_butscale;
-  debouncer d1 (
-      clk,
-      up,
-      debounced_up
-  );
-  debouncer d3 (
-      clk,
-      down,
-      debounced_down
-  );
-  debouncer d2 (
-      clk,
-      butscale,
-      debounced_butscale
-  );
-
-  always @(debounced_butscale) begin
-    if (debounced_butscale == 1'b1) begin
-      scale = scale + 1'b1;
-      if (scale >= MAX_SCALE) scale = 3'b000;
+    // 7-segment tube adjustment
+    wire seg_rset;
+    assign seg_rset = 1'b0;
+    wire [31:0] val_7seg;
+    light_val_controller ctrl_val (
+        _mode,
+        num,
+        score,
+        val_7seg
+    );
+    light_7seg_manager manager_7seg (
+        val_7seg,
+        seg_rset,
+        clk,
+        _mode,
+        seg_out0,
+        tub_sel0,
+        seg_out1,
+        tub_sel1
+    );
+    initial begin
+        num   = 0;
+        scale = 3'b000;
+        rset  = 1'b0;
     end
-  end
 
-  // change currect music
-  always @(posedge clk) begin
-    if (debounced_up) begin
-      num <= (num >= MAX_PIECES - 1) ? 0 : num + 1;
-      rset = ~rset;
-    end else if (debounced_down) begin
-      num <= (num == 0) ? MAX_PIECES - 1 : num - 1;
-      rset = ~rset;
+    //debouncers
+    wire debounced_down;
+    wire debounced_up;
+    wire debounced_butscale;
+    debouncer d1 (
+        clk,
+        up,
+        debounced_up
+    );
+    debouncer d3 (
+        clk,
+        down,
+        debounced_down
+    );
+    debouncer d2 (
+        clk,
+        butscale,
+        debounced_butscale
+    );
+
+    always @(debounced_butscale) begin
+        if (debounced_butscale == 1'b1) begin
+            scale = scale + 1'b1;
+            if (scale >= MAX_SCALE) scale = 3'b000;
+        end
     end
-  end
 
-  //alter note for different modes
-  always @(*) begin
-    if (_mode == `M_IN) note = noteIn;
-    else if (_mode == `M_AUTO) note = noteAuto;
-    else if (_mode == `M_LEARN) note = noteLearn;  //need add learn then
-    else note = noteIn;
-  end
+    // change currect music
+    always @(posedge clk) begin
+        if (debounced_up) begin
+            num <= (num >= MAX_PIECES - 1) ? 0 : num + 1;
+            rset = ~rset;
+        end else if (debounced_down) begin
+            num <= (num == 0) ? MAX_PIECES - 1 : num - 1;
+            rset = ~rset;
+        end
+    end
 
-  Buzzer buzzer (
-      play,
-      _mode,
-      clk,
-      note,
-      scale,
-      led,
-      speaker
-  );
-  vga v (
-      .clk(clk),
-      .rst(1'b1),
-      .mode(_mode),
-      .r(red),
-      .g(green),
-      .b(blue),
-      .vs(vs),
-      .hs(hs)
-  );
+    //alter note for different modes
+    always @(*) begin
+        if (_mode == `M_IN) note = noteIn;
+        else if (_mode == `M_AUTO) note = noteAuto;
+        else if (_mode == `M_LEARN) note = noteLearn;
+        else note = noteIn;
+    end
 
-  // 3 different mode controllers
-  InController inController (
-      sel,
-      octave,
-      _mode,
-      noteIn
-  );  //add scale or not
-  AutoController autoController (
-      rset,
-      clk,
-      num,
-      _mode,
-      noteAuto
-  );
-  LearnController learnController (
-      rset,
-      clk,
-      num,
-      _mode,
-      sel,
-      noteLearn,
-      score,
-      play
-  );
+    Buzzer buzzer (
+        play,
+        _mode,
+        clk,
+        note,
+        scale,
+        led,
+        speaker
+    );
+    vga v (
+        .clk(clk),
+        .rst(1'b1),
+        .mode(_mode),
+        .note(note),
+        .num(num),
+        .r(red),
+        .g(green),
+        .b(blue),
+        .vs(vs),
+        .hs(hs)
+    );
+
+    // 3 different mode controllers
+    InController inController (
+        sel,
+        octave,
+        _mode,
+        noteIn
+    );  //add scale or not
+    AutoController autoController (
+        rset,
+        clk,
+        num,
+        _mode,
+        noteAuto
+    );
+    LearnController learnController (
+        rset,
+        clk,
+        num,
+        _mode,
+        sel,
+        noteLearn,
+        score,
+        play
+    );
 endmodule
