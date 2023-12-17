@@ -28,13 +28,13 @@ module light_7seg_manager (
     );  //second 4 digits
 
     always @(posedge clk or negedge rst) begin
-        if (~rst) timer <= 64'd0;
+        if (rst) timer <= 64'd0;
         else if (timer == `S_DELAY_4) timer <= 64'd0;
         else timer <= timer + 1'b1;
     end
 
-    always @(posedge clk or negedge rst) begin
-        if (~rst) begin
+    always @(posedge clk) begin
+        if (rst) begin
             tub_sel0 = 4'b0;  //all not setting
             tub_sel1 = 4'b0;
             sw0 = 4'b0;
