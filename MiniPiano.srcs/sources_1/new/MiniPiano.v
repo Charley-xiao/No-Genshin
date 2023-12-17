@@ -29,10 +29,15 @@ module MiniPiano (
     wire [4:0] noteIn;
     wire [4:0] noteAuto;
     wire [4:0] noteLearn;
+    wire [4:0] noteAlter;
     reg [6:0] num;
     reg [2:0] scale;
     integer MAX_PIECES = 3'b100;
     integer MAX_SCALE = 3'b011;
+    wire [6:0] parsed_sel;
+
+    wire rset_n;
+    not not_rst (rset_n, rset);
 
     // 7-segment tube adjustment
     wire seg_rset;
@@ -98,12 +103,22 @@ module MiniPiano (
         end
     end
 
+    //make note adjustment
+    sel_alter_manager altman (
+        rset,
+        clk,
+        mode,
+        sel,
+        parsed_sel,
+        noteAlter
+    );
+
     //alter note for different modes
     always @(*) begin
         if (_mode == `M_IN) note = noteIn;
         else if (_mode == `M_AUTO) note = noteAuto;
         else if (_mode == `M_LEARN) note = noteLearn;
-        else note = noteIn;
+        else if (_mode == `M_ALTER) note = noteAlter;
     end
 
     Buzzer buzzer (
@@ -115,9 +130,11 @@ module MiniPiano (
         led,
         speaker
     );
+
+    //vga
     vga v (
         .clk(clk),
-        .rst(1'b1),
+        .rst(rset_n),
         .mode(_mode),
         .note(note),
         .num(num),
@@ -130,7 +147,7 @@ module MiniPiano (
 
     // 3 different mode controllers
     InController inController (
-        sel,
+        parsed_sel,
         octave,
         _mode,
         noteIn
@@ -147,7 +164,7 @@ module MiniPiano (
         clk,
         num,
         _mode,
-        sel,
+        parsed_sel,
         noteLearn,
         score,
         play
