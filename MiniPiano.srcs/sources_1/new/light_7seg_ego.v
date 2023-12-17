@@ -9,9 +9,7 @@ module light_7seg_ego (
 );
 
     always @* begin
-        if (_mode != `M_AUTO) begin
-            seg_out = 0;  //no signal shown
-        end else if (rst) begin
+        if (rst) begin
             seg_out = 8'b1111_1100;  //0
         end else begin
             case (sw)

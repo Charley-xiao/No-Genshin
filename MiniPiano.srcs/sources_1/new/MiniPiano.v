@@ -42,11 +42,14 @@ module MiniPiano (
     // 7-segment tube adjustment
     wire seg_rset;
     assign seg_rset = 1'b0;
+    
+    wire [2:0] cur_note_alter;
     wire [31:0] val_7seg;
     light_val_controller ctrl_val (
         _mode,
         num,
         score,
+        cur_note_alter,
         val_7seg
     );
     light_7seg_manager manager_7seg (
@@ -107,10 +110,11 @@ module MiniPiano (
     sel_alter_manager altman (
         rset,
         clk,
-        mode,
+        _mode,
         sel,
         parsed_sel,
-        noteAlter
+        noteAlter,
+        cur_note_alter
     );
 
     //alter note for different modes
