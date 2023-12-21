@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# Vivado v2017.4 (64-bit)
+# SW Build 2086221 on Fri Dec 15 20:55:39 MST 2017
+# IP Build 2085800 on Fri Dec 15 22:25:07 MST 2017
+# Start of session at: Thu Dec 21 14:52:07 2023
+# Process ID: 26316
+# Current directory: C:/Users/Lenovo/Documents/GitHub/No-Genshin
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent13912 C:\Users\Lenovo\Documents\GitHub\No-Genshin\MiniPiano.xpr
+# Log file: C:/Users/Lenovo/Documents/GitHub/No-Genshin/vivado.log
+# Journal file: C:/Users/Lenovo/Documents/GitHub/No-Genshin\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project C:/Users/Lenovo/Documents/GitHub/No-Genshin/MiniPiano.xpr
+update_compile_order -fileset sources_1

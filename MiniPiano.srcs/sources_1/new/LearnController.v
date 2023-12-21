@@ -7,9 +7,11 @@ module LearnController (
     input [6:0] num,
     input [1:0] _mode,
     input [6:0] sel,
+    input [3:0] user_id, // new input:the current id of user
     output reg [4:0] note,
     output reg [31:0] score,
-    output reg play
+    output reg play,
+    output reg [1:0] grade
 );
 
     // State machine parameters
@@ -18,7 +20,7 @@ module LearnController (
     parameter PLAY = 2'b10;
     parameter RESULT = 2'b11;
     parameter NOTE_DURATION = 80000000;  // Assume each note lasts this duration
-
+    parameter TIMER_MAX = 100000000;     // 1 second on a 100MHz clock
     // Registers and wires
     reg [1:0] state;
     reg [31:0] note_duration_counter;
@@ -26,6 +28,8 @@ module LearnController (
     reg note_played;  // Indicates if the current note has been played
     reg score_added;  // Ensures score is only added once
     reg mrset;  // Master reset tracking
+    reg [31:0] timer;
+    reg running;
     wire [700:0] pcs;
     wire [300:0] len;
     wire [7:0] is;
@@ -54,10 +58,12 @@ module LearnController (
     end
 
     // Index for the current note
-    integer i;
+    integer i,j;
     initial begin
         mrset   = 1'b1;
         prevnum = 0;
+        timer = TIMER_MAX;
+        running = 0;
     end
 
     // Main learning mode state machine
@@ -72,6 +78,9 @@ module LearnController (
             score <= 0;
             note_duration_counter <= NOTE_DURATION;
             play <= 0;
+            timer <= TIMER_MAX; // Reset the timer
+            running <= 0; // Stop the timer
+            grade <= 2'b11; // C grade
         end else if (_mode == `M_LEARN) begin
             // If the selected song has changed, reset to prepare the new song
             if (prevnum != num) begin
@@ -83,6 +92,9 @@ module LearnController (
                 score_added <= 0;
                 play <= 0;
                 state <= IDLE;
+                timer <= TIMER_MAX; // Reset the timer
+                running <= 0; // Stop the timer
+                 grade <= 2'b11; // C grade
             end else begin
                 case (state)
                     IDLE: begin
@@ -91,12 +103,15 @@ module LearnController (
                         score <= 0;
                         state <= READY;
                         note_played <= 0;
+                        timer <= TIMER_MAX;
+                        running <= 0;
+                        grade <= 2'b11; // C grade
                     end
                     // READY state: prepare to play the note
                     READY: begin
                         play <= 1'b0;
-
                         score_added <= 0;  // Reset score added flag
+                       running <= 1;
                         if (note < 5'd8 && note > 0) _note <= note + 5'b01000;
                         else if (note > 5'd16 && note < 5'd24) _note <= note - 5'b01000;
                         else if (note > 5'd24 && note <= 5'd31) _note <= note - 5'b10000;
@@ -112,10 +127,13 @@ module LearnController (
                     end
                     // PLAY state: wait for user input and play the note
                     PLAY: begin
+                     if (running && timer > 0) timer <= timer - 1;
                         if (play) begin
                             play <= 0;
                         end else if (note_played && sel == 7'b0000000) begin
                             note_played <= 1'b0;  // Reset the flag once the selector is cleared
+                            timer <= TIMER_MAX;
+                            running <= 1;
                             state <= READY;  // Go back to READY state to wait for new input
                         end else if (!note_played) begin
                             // Check if the note is a rest
@@ -129,6 +147,7 @@ module LearnController (
                                     state <= RESULT;
                                 end
                             end else if (sel != 7'b0000000) begin
+                            running <= 0;
                                 // Check if the correct key is pressed
                                 if (keyToNote[sel] == _note) begin
                                     play <= 1'b1;  // Start playing the note
@@ -144,17 +163,20 @@ module LearnController (
                                             state <= RESULT;  // No more notes, show result
                                         end
                                     end
-                                    if (!score_added) begin
-                                        score <= score + 10;  // Increase score
-                                        score_added <= 1;  // Mark score as added
-                                    end
+                                     if (!score_added) begin
+                                           if (timer >70000000) score <= score + 5;
+                                           else if (timer > 50000000) score <= score + 4;
+                                           else if (timer > 30000000) score <= score + 3;
+                                           else score <= score + 1;
+                                       score_added <= 1; // Mark score as added
+                                                end
                                 end else begin
 
                                     // Incorrect key pressed, could add light flashing etc.
                                     if (play == 1'b1) begin
                                         play <= 1'b0;
                                     end else if (!score_added) begin
-                                        score <= (score > 5) ? score - 5 : 0;  // Decrease score but prevent negative
+                                        score <= score ;  // Decrease score but prevent negative
                                         score_added <= 1;  // Mark score as decreased
                                     end
                                     if (play == 1'b0) begin
@@ -166,9 +188,17 @@ module LearnController (
                     end
                     // RESULT state: display the result and wait for user action
                     RESULT: begin
+                     if (score > is * 4) begin
+                                       grade <= 2'b00; // S grade
+                                   end else if (score> is * 3) begin
+                                       grade <= 2'b01; // A grade
+                                   end else if (score > is* 2) begin
+                                       grade <= 2'b10; // B grade
+                                   end else begin
+                                       grade <= 2'b11; // C grade
+                                   end
                         play  <= 1'b0;
                         score <= score;
-                        // Display the result logic...
                         // Reset to IDLE after the result is acknowledged
 
                     end
