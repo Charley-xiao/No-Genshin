@@ -7,7 +7,7 @@ module state_data_ctrl (
 
     always @(posedge clk, negedge rst) begin
         if (!rst) begin
-            data <= 6'b11_1110; //reset, all zero
+            data <= 6'b11_1110;  //reset, all zero
         end else begin
             case (mode)
                 2'b01: begin
@@ -18,7 +18,6 @@ module state_data_ctrl (
                 end
                 2'b11: begin
                     data <= 36'b111110_111110_111110_010010_010111_111110;  //IN
-
                 end
                 default: begin
                     data <= 36'b111110_111110_111110_111110_111110_111110;  //blank

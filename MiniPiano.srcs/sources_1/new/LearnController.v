@@ -112,9 +112,9 @@ module LearnController (
                         play <= 1'b0;
                         score_added <= 0;  // Reset score added flag
                        running <= 1;
-                        if (note < 5'd8 && note > 0) _note <= note + 5'b01000;
-                        else if (note > 5'd16 && note < 5'd24) _note <= note - 5'b01000;
-                        else if (note > 5'd24 && note <= 5'd31) _note <= note - 5'b10000;
+                        if (note < 5'd8 && note > 0) _note <= note + `OCT_LOW_P;
+                        else if (note > 5'd16 && note < 5'd24) _note <= note - `OCT_MID_P;
+                        else if (note > 5'd24 && note <= 5'd31) _note <= note - `OCT_HGH_P;
                         else _note <= note;
                         state <= PLAY;  // Transition to PLAY state
                         case (len[i*2+:2])
