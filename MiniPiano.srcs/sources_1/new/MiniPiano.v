@@ -57,6 +57,7 @@ module MiniPiano (
         num,
         _score,
         cur_note_alter,
+        grade,
         val_7seg
     );
     light_7seg_manager manager_7seg (
