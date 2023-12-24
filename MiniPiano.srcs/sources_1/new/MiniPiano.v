@@ -2,6 +2,7 @@
 `include "define.v"
 module MiniPiano (
     input wire clk,
+    input wire rset,
     input wire [6:0] sel,  // Selection input for the musical note
     input wire [1:0] octave,  // Octave selection input
     input wire [1:0] _mode,  // 11 InController, 10 AutoController, 01 LearnController
@@ -25,7 +26,6 @@ module MiniPiano (
 );
     assign md = 1'b1;  // Set md to a constant 0 as it's currently not used
     wire play;  // Wire to indicate when a note should be played
-    reg rset;
     reg [4:0] note;  // Register to store the current note value
     wire [9:0] score;  // Wire to carry the score value
     wire [1:0] grade;
@@ -40,7 +40,8 @@ module MiniPiano (
     wire [6:0] parsed_sel;  // Wire to carry the parsed selection input
 
     wire rset_n;
-    not not_rst (rset_n, rset);  // Invert the reset signal
+    wire debounced_rset;
+    not not_rst (rset_n, debounced_rset);  // Invert the reset signal
 
     // 7-segment tube adjustment
     wire seg_rset;
@@ -51,15 +52,14 @@ module MiniPiano (
     wire [11:0] _score;
 
     // account operation
-    reg [3:0] current_user_id = 0;
+    reg [3:0] current_user_id ;
     wire [7:0] _current_user_id;  // decimal ver
     reg [1:0] user_ratings[3:0];
     integer i;
-    initial begin
-        for (i = 0; i < 4; i = i + 1) begin
-            user_ratings[i] = `G_C;  // default rating: C
-        end
-        current_user_id = 0;  // default id: 0
+   initial begin
+   for(i=0;i<4;i=i+1)begin
+    user_ratings[current_user_id]=`G_C;
+    end
     end
     always @(grade) begin
         if (user_ratings[current_user_id] > grade) begin
@@ -98,7 +98,6 @@ module MiniPiano (
     initial begin
         num   = 0;
         scale = 3'b000;
-        rset  = 1'b0;
     end
 
     //debouncers
@@ -106,6 +105,11 @@ module MiniPiano (
     wire debounced_up;
     wire debounced_butscale;
     wire debounced_user_switch;
+       debouncer rsett (
+         clk,
+         rset,
+         debounced_rset
+     );
     debouncer d1 (
         clk,
         up,
@@ -128,7 +132,7 @@ module MiniPiano (
     );
       always @(posedge debounced_user_switch) begin
           current_user_id <= current_user_id + 1;
-          if (current_user_id >= 4'b0100) begin  // when user id surpass max
+          if (current_user_id >= 4'b0011) begin  // when user id surpass max
               current_user_id <= 0;
           end
       end
@@ -144,16 +148,15 @@ module MiniPiano (
     always @(posedge clk) begin
         if (debounced_up) begin
             num <= (num >= MAX_PIECES - 1) ? 0 : num + 1;
-            rset = ~rset;
         end else if (debounced_down) begin
             num <= (num == 0) ? MAX_PIECES - 1 : num - 1;
-            rset = ~rset;
+   
         end
     end
 
     //make note adjustment
     sel_alter_manager altman (
-        rset,
+        debounced_rset,
         clk,
         _mode,
         sel,
@@ -202,14 +205,14 @@ module MiniPiano (
         noteIn
     );  //add scale or not
     AutoController autoController (
-        rset,
+         debounced_rset,
         clk,
         num,
         _mode,
         noteAuto
     );
     LearnController learnController (
-        rset,
+         debounced_rset,
         clk,
         num,
         _mode,

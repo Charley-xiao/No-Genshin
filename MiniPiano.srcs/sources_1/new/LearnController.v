@@ -64,15 +64,13 @@ module LearnController (
         prevnum = 0;
         timer = TIMER_MAX;
         running = 0;
-          grade = `G_C; 
     end
 
     // Main learning mode state machine
     always @(posedge clk) begin
-        if (rset != mrset) begin
+        if (rset ) begin
             // Reset state logic
             i <= is;
-            mrset <= rset;
             state <= IDLE;
             note_played <= 0;
             score_added <= 0;
@@ -102,6 +100,7 @@ module LearnController (
                         i <= is;
                         prevnum <= num;
                         score <= 0;
+                        score_added<=0;
                         state <= READY;
                         note_played <= 0;
                         timer <= TIMER_MAX;
@@ -110,9 +109,6 @@ module LearnController (
                     end
                     // READY state: prepare to play the note
                     READY: begin
-                        play <= 1'b0;
-                        score_added <= 0;  // Reset score added flag
-                       running <= 1;
                         if (note < 5'd8 && note > 0) _note <= note + `OCT_LOW_P;
                         else if (note > 5'd16 && note < 5'd24) _note <= note - `OCT_MID_P;
                         else if (note > 5'd24 && note <= 5'd31) _note <= note - `OCT_HGH_P;
@@ -123,15 +119,16 @@ module LearnController (
                             2'b01:   note_duration_counter <= `CNT_L_1_4;
                             2'b10:   note_duration_counter <= `CNT_L_1_8;
                             2'b11:   note_duration_counter <= `CNT_L_1_16;
-                            default: note_duration_counter <= `CNT_L_1_2;
+                            default: note_duration_counter <= `CNT_L_1_16;
                         endcase
                     end
                     // PLAY state: wait for user input and play the note
                     PLAY: begin
-                     if (running && timer > 0) timer <= timer - 1;
+                     if (running && timer > 0) begin timer <= timer - 1; end
                         if (play) begin
                             play <= 0;
                         end else if (note_played && sel == 7'b0000000) begin
+                            score_added<=1'b0;
                             note_played <= 1'b0;  // Reset the flag once the selector is cleared
                             timer <= TIMER_MAX;
                             running <= 1;
@@ -158,31 +155,31 @@ module LearnController (
                                         play <= 1'b0;  // Stop playing the note
                                         note_played <= 1;  // Mark the note as played
                                         if (i > 0) begin
+                                              if (!score_added) begin
+                                              if (timer > `STD_1) score <= score + `STD_1_S;
+                                              else if (timer > `STD_2) score <= score + `STD_2_S;
+                                              else if (timer > `STD_3) score <= score + `STD_3_S;
+                                              else score <= score + `STD_4_S;
+                                              score_added <= 1; // Mark score as added
+                                             end
                                             i <= i - 1;  // Prepare the next note
                                             state <= READY;
                                         end else begin
+                                               if (!score_added) begin
+                                              if (timer > `STD_1) score <= score + `STD_1_S;
+                                              else if (timer > `STD_2) score <= score + `STD_2_S;
+                                              else if (timer > `STD_3) score <= score + `STD_3_S;
+                                              else score <= score + `STD_4_S;
+                                          score_added <= 1; // Mark score as added
+                                                   end
                                             state <= RESULT;  // No more notes, show result
                                         end
                                     end
-                                     if (!score_added) begin
-                                           if (timer > `STD_1) score <= score + `STD_1_S;
-                                           else if (timer > `STD_2) score <= score + `STD_2_S;
-                                           else if (timer > `STD_3) score <= score + `STD_3_S;
-                                           else score <= score + `STD_4_S;
-                                       score_added <= 1; // Mark score as added
-                                                end
                                 end else begin
-
                                     // Incorrect key pressed, could add light flashing etc.
-                                    if (play == 1'b1) begin
-                                        play <= 1'b0;
-                                    end else if (!score_added) begin
-                                        score <= score ;  // Decrease score but prevent negative
-                                        score_added <= 1;  // Mark score as decreased
-                                    end
-                                    if (play == 1'b0) begin
-                                        state <= READY;  // Return to READY state because of the wrong input
-                                    end
+                                        play <= 1'b0; 
+                                        score_added<=0;                                   
+                                        state <= READY; 
                                 end
                             end
                         end
@@ -198,13 +195,9 @@ module LearnController (
                                    end else begin
                                        grade <= `G_C; // C grade
                                    end
-                        play  <= 1'b0;
                         score <= score;
                         // Reset to IDLE after the result is acknowledged
 
-                    end
-                    default: begin
-                        state <= IDLE;
                     end
                 endcase
             end
