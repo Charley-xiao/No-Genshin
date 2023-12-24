@@ -28,7 +28,7 @@ module light_7seg_ego (
                 4'hc: seg_out = 8'b1001_1100;  //C
                 4'hd: seg_out = 8'b0111_1010;  //D
                 4'he: seg_out = 8'b1001_1110;  //E
-                4'hf: seg_out = 8'b1000_1110;  //F
+                4'hf: seg_out = 8'b0000_0000;  //F represents space
                 default: seg_out = 8'b0000_0001;
             endcase
         end
