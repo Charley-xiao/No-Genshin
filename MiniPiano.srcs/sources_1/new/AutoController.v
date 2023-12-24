@@ -39,11 +39,11 @@ module AutoController (
                 i <= is;
                 note <= pcs[i*5+:5];  // pieces with 5 as length
                 case (len[i*2+:2])
-                    `LEN_1_2:  counter <= 160000000;  //1/2
-                    `LEN_1_4:  counter <= 80000000;  //1/4
-                    `LEN_1_8:  counter <= 40000000;  //1/8
-                    `LEN_1_16: counter <= 20000000;  //1/16
-                    default:   counter <= 160000000;
+                    `LEN_1_2:  counter <= `CNT_1_2;  //1/2
+                    `LEN_1_4:  counter <= `CNT_1_4;  //1/4
+                    `LEN_1_8:  counter <= `CNT_1_8;  //1/8
+                    `LEN_1_16: counter <= `CNT_1_16;  //1/16
+                    default:   counter <= `CNT_1_2;
                 endcase
                 if (i == 0) begin
                     i <= is;  //reset to the length of the song
@@ -52,7 +52,7 @@ module AutoController (
                 end
             end else begin
                 counter <= counter - 1;
-                if (counter < 5000000) note <= 0;
+                if (counter < `AUTO_TIMEOUT) note <= 0;
             end
         end
     end

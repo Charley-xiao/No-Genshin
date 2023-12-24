@@ -117,7 +117,7 @@ module MiniPiano (
      integer i;
       initial begin
               for (i = 0; i < 16; i = i + 1) begin
-                  user_ratings[i] = 2'b11; // 默认评级为C
+                  user_ratings[i] = `G_C; // 默认评级为C
               end
               current_user_id = 0; // 默认开始时用户ID为0
           end

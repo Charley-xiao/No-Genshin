@@ -48,13 +48,13 @@ module LearnController (
     reg [4:0] keyToNote[129:0];
     reg [4:0] _note;  // Translated note value
     always @(*) begin
-        keyToNote[7'b0000001] = 5'b01001;
-        keyToNote[7'b0000010] = 5'b01010;
-        keyToNote[7'b0000100] = 5'b01011;
-        keyToNote[7'b0001000] = 5'b01100;
-        keyToNote[7'b0010000] = 5'b01101;
-        keyToNote[7'b0100000] = 5'b01110;
-        keyToNote[7'b1000000] = 5'b01111;
+        keyToNote[7'b0000001] = `DO + `OCT_MID_P;
+        keyToNote[7'b0000010] = `RE + `OCT_MID_P;
+        keyToNote[7'b0000100] = `MI + `OCT_MID_P;
+        keyToNote[7'b0001000] = `FA + `OCT_MID_P;
+        keyToNote[7'b0010000] = `SO + `OCT_MID_P;
+        keyToNote[7'b0100000] = `LA + `OCT_MID_P;
+        keyToNote[7'b1000000] = `SI + `OCT_MID_P;
     end
 
     // Index for the current note
@@ -80,7 +80,7 @@ module LearnController (
             play <= 0;
             timer <= TIMER_MAX; // Reset the timer
             running <= 0; // Stop the timer
-            grade <= 2'b11; // C grade
+            grade <= `G_C; // C grade
         end else if (_mode == `M_LEARN) begin
             // If the selected song has changed, reset to prepare the new song
             if (prevnum != num) begin
@@ -94,7 +94,7 @@ module LearnController (
                 state <= IDLE;
                 timer <= TIMER_MAX; // Reset the timer
                 running <= 0; // Stop the timer
-                 grade <= 2'b11; // C grade
+                 grade <= `G_C; // C grade
             end else begin
                 case (state)
                     IDLE: begin
@@ -105,7 +105,7 @@ module LearnController (
                         note_played <= 0;
                         timer <= TIMER_MAX;
                         running <= 0;
-                        grade <= 2'b11; // C grade
+                        grade <= `G_C; // C grade
                     end
                     // READY state: prepare to play the note
                     READY: begin
@@ -118,11 +118,11 @@ module LearnController (
                         else _note <= note;
                         state <= PLAY;  // Transition to PLAY state
                         case (len[i*2+:2])
-                            2'b00:   note_duration_counter <= 120000000;
-                            2'b01:   note_duration_counter <= 70000000;
-                            2'b10:   note_duration_counter <= 40000000;
-                            2'b11:   note_duration_counter <= 20000000;
-                            default: note_duration_counter <= 160000000;
+                            2'b00:   note_duration_counter <= `CNT_L_1_2;
+                            2'b01:   note_duration_counter <= `CNT_L_1_4;
+                            2'b10:   note_duration_counter <= `CNT_L_1_8;
+                            2'b11:   note_duration_counter <= `CNT_L_1_16;
+                            default: note_duration_counter <= `CNT_L_1_2;
                         endcase
                     end
                     // PLAY state: wait for user input and play the note
@@ -137,7 +137,7 @@ module LearnController (
                             state <= READY;  // Go back to READY state to wait for new input
                         end else if (!note_played) begin
                             // Check if the note is a rest
-                            if (_note == 5'b00000 || _note == 5'b01000 || _note == 5'b10000) begin
+                            if (_note == `OCT_LOW_P || _note == `OCT_MID_P || _note == `OCT_HGH_P) begin
                                 // Note is a rest, skip playing
                                 play <= 1'b0;
                                 if (i > 0) begin
@@ -164,10 +164,10 @@ module LearnController (
                                         end
                                     end
                                      if (!score_added) begin
-                                           if (timer >70000000) score <= score + 5;
-                                           else if (timer > 50000000) score <= score + 4;
-                                           else if (timer > 30000000) score <= score + 3;
-                                           else score <= score + 1;
+                                           if (timer > `STD_1) score <= score + `STD_1_S;
+                                           else if (timer > `STD_2) score <= score + `STD_2_S;
+                                           else if (timer > `STD_3) score <= score + `STD_3_S;
+                                           else score <= score + `STD_4_S;
                                        score_added <= 1; // Mark score as added
                                                 end
                                 end else begin
@@ -189,13 +189,13 @@ module LearnController (
                     // RESULT state: display the result and wait for user action
                     RESULT: begin
                      if (score > is * 4) begin
-                                       grade <= 2'b00; // S grade
+                                       grade <= `G_S; // S grade
                                    end else if (score> is * 3) begin
-                                       grade <= 2'b01; // A grade
+                                       grade <= `G_A; // A grade
                                    end else if (score > is* 2) begin
-                                       grade <= 2'b10; // B grade
+                                       grade <= `G_B; // B grade
                                    end else begin
-                                       grade <= 2'b11; // C grade
+                                       grade <= `G_C; // C grade
                                    end
                         play  <= 1'b0;
                         score <= score;

@@ -14,13 +14,13 @@ module InController(
         );  
         if(_mode == `M_IN) begin
             case(sel) //play with differect input
-                7'b0000001: note = 5'b00001 + _oct;
-                7'b0000010: note = 5'b00010 + _oct;
-                7'b0000100: note = 5'b00011 + _oct;
-                7'b0001000: note = 5'b00100 + _oct;
-                7'b0010000: note = 5'b00101 + _oct;
-                7'b0100000: note = 5'b00110 + _oct;
-                7'b1000000: note = 5'b00111 + _oct;
+                7'b0000001: note = `DO + _oct;
+                7'b0000010: note = `RE + _oct;
+                7'b0000100: note = `MI + _oct;
+                7'b0001000: note = `FA + _oct;
+                7'b0010000: note = `SO + _oct;
+                7'b0100000: note = `LA + _oct;
+                7'b1000000: note = `SI + _oct;
                 default: note = 5'b00000 + _oct;
             endcase
         end else note = 5'b00000;//not selected
