@@ -27,7 +27,7 @@ module MiniPiano (
     wire play;// Wire to indicate when a note should be played
     reg rset;
     reg [4:0] note;// Register to store the current note value
-    wire [31:0] score;// Wire to carry the score value
+    wire [9:0] score;// Wire to carry the score value
     wire [1:0] grade;
     wire [4:0] noteIn; // Wire to carry the note from InController
     wire [4:0] noteAuto;
@@ -48,11 +48,14 @@ module MiniPiano (
     
     wire [2:0] cur_note_alter;//the current note alteration
     wire [31:0] val_7seg;
+    wire [11:0] _score;
+    
+    hex_to_decimal(score,_score);
     
     light_val_controller ctrl_val (
         _mode,
         num,
-        score,
+        _score,
         cur_note_alter,
         val_7seg
     );

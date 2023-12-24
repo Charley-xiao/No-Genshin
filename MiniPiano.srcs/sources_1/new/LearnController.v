@@ -9,7 +9,7 @@ module LearnController (
     input [6:0] sel,
     input [3:0] user_id, // new input:the current id of user
     output reg [4:0] note,
-    output reg [31:0] score,
+    output reg [9:0] score,
     output reg play,
     output reg [1:0] grade
 );
