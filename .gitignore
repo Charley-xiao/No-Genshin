@@ -139,3 +139,5 @@ $RECYCLE.BIN/
 MiniPiano.cache/*
 MiniPiano.runs/*
 vivado.jou
+!Project.assets/*
+Project.assets/.DS_Store
