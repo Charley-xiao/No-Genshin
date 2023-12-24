@@ -23,7 +23,7 @@ module MiniPiano (
     output hs,
     output vs
 );
-    assign md = 1'b0;  // Set md to a constant 0 as it's currently not used
+    assign md = 1'b1;  // Set md to a constant 0 as it's currently not used
     wire play;  // Wire to indicate when a note should be played
     reg rset;
     reg [4:0] note;  // Register to store the current note value
@@ -52,24 +52,18 @@ module MiniPiano (
 
     // account operation
     reg [3:0] current_user_id = 0;
-    reg [7:0] _current_user_id;  // decimal ver
+    wire [7:0] _current_user_id;  // decimal ver
     reg [1:0] user_ratings[3:0];
-    always @(posedge debounced_user_switch) begin
-        current_user_id <= current_user_id + 1;
-        if (current_user_id >= 4'b1111) begin  // when user id surpass max
-            current_user_id <= 0;
-        end
-    end
     integer i;
     initial begin
-        for (i = 0; i < 16; i = i + 1) begin
+        for (i = 0; i < 4; i = i + 1) begin
             user_ratings[i] = `G_C;  // default rating: C
         end
         current_user_id = 0;  // default id: 0
     end
-    always @(posedge clk) begin
+    always @(grade) begin
         if (user_ratings[current_user_id] > grade) begin
-            user_ratings[current_user_id] <= grade;
+            user_ratings[current_user_id] = grade;
         end
     end  //use showaccount control the view, (account id and grade) or (present score and id)
 
@@ -87,8 +81,9 @@ module MiniPiano (
         num,
         _score,
         cur_note_alter,
-        grade,
-        val_7seg
+        user_ratings[current_user_id],
+        _current_user_id,
+                val_7seg
     );
     light_7seg_manager manager_7seg (
         val_7seg,
@@ -131,6 +126,12 @@ module MiniPiano (
         user_switch,
         debounced_user_switch
     );
+      always @(posedge debounced_user_switch) begin
+          current_user_id <= current_user_id + 1;
+          if (current_user_id >= 4'b0100) begin  // when user id surpass max
+              current_user_id <= 0;
+          end
+      end
 
     always @(debounced_butscale) begin
         if (debounced_butscale == 1'b1) begin

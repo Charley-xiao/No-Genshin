@@ -64,6 +64,7 @@ module LearnController (
         prevnum = 0;
         timer = TIMER_MAX;
         running = 0;
+          grade = `G_C; 
     end
 
     // Main learning mode state machine

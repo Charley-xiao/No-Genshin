@@ -12,12 +12,13 @@ module light_val_controller (
 
     always @(*) begin
         if (_mode == `M_AUTO) begin
-            val_7seg[6:0]  = num;
-            val_7seg[31:7] = 24'hffffff;  //set last 7 as num
+            val_7seg[7:0]  = num;
+            val_7seg[31:8] = 24'hffffff;  //set last 7 as num
         end else if (_mode == `M_LEARN) begin
             val_7seg[11:0]  = score;  //show score in this mode
-            val_7seg[27:20] = user_id;
-            val_7seg[19:12] = 8'hff;
+            val_7seg[23:16] = user_id;
+            val_7seg[27:24] = 4'hf;
+            val_7seg[15:12] = 4'hf;
             if (grade == `G_S) val_7seg[31:28] = 4'h5;
             if (grade == `G_A) val_7seg[31:28] = 4'ha;
             if (grade == `G_B) val_7seg[31:28] = 4'hb;
