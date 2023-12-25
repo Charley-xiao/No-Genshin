@@ -4,6 +4,15 @@
 `define M_LEARN 2'b01
 `define M_ALTER 2'b00
 
+//LED
+`define nonled 7'b0000000
+`define oneled 7'b1000000
+`define twoled 7'b0100000
+`define thrled 7'b0010000
+`define forled 7'b0001000
+`define fivled 7'b0000100
+`define sixled 7'b0000010
+`define sevled 7'b0000001
 // some timeout constants
 `define TIMEOUT 31'd1000000
 `define RATE 31'd1000000
@@ -66,7 +75,7 @@
 `define OCT_HGH_P 5'b10000
 
 // grades
-`define G_S 2'b00
-`define G_A 2'b01
-`define G_B 2'b10
-`define G_C 2'b11
+`define G_S 2'b11
+`define G_A 2'b10
+`define G_B 2'b01
+`define G_C 2'b00

@@ -8,10 +8,7 @@ module AutoController (
     input paused,
     output reg [4:0] note
 );
-    reg mrset;  //memorized reset
-    initial begin
-        mrset = 0;
-    end
+    reg [6:0] prenum;
     wire [700:0] pcs;  //pieces
     wire [300:0] len;  //length of pieces
     wire [7:0] is;
@@ -31,10 +28,10 @@ module AutoController (
     );
 
     always @(posedge clk) begin
-        if (mrset != rset) begin
+        if (prenum != num&&_mode== `M_AUTO ) begin
+            prenum <=num;
             i <= is;
-            mrset <= rset;
-        end
+        end else begin
         if (_mode == `M_AUTO && paused == 1)begin
         note<=0;
         end  
@@ -60,5 +57,6 @@ module AutoController (
             end
             
         end
+    end
     end
 endmodule

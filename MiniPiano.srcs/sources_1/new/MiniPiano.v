@@ -61,12 +61,6 @@ module MiniPiano (
     reg [1:0] user_ratings[3:0];
     wire update_grade_flag;
     integer i;
-    initial begin
-        for (i = 0; i < 4; i = i + 1) begin
-            user_ratings[i] = `G_C; // Assume `G_C` is the lowest grade
-        end
-        current_user_id = 0; // Initialize the current user ID
-    end
     always @* begin
      if (user_ratings[current_user_id] > grade&&update_grade_flag==1'b1) begin
             user_ratings[current_user_id] = grade;
@@ -158,7 +152,7 @@ module MiniPiano (
             num <= (num >= MAX_PIECES - 1) ? 0 : num + 1;
         end else if (debounced_down) begin
             num <= (num == 0) ? MAX_PIECES - 1 : num - 1;
-   
+            
         end
     end
 

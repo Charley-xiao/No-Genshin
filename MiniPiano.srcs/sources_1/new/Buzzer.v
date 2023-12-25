@@ -71,10 +71,6 @@ module Buzzer(
     assign Cnotes[30] = 56818;assign Fnotes[30]=170262;assign Bnotes[30]=151702;
     //B6
     assign Cnotes[31] =50628;assign Fnotes[31]=151685;assign Bnotes[31]=143177;
-
-    initial begin
-        pwm = 0;
-    end
     
     integer i;
     always @(posedge clk) begin
@@ -84,8 +80,7 @@ module Buzzer(
                 3'b010: for (i = 1; i < 32; i = i + 1) notes[i] = Bnotes[i];
                 // Add more cases as needed
             endcase
-        
-      if(note == 5'b00000 || note == 5'b01000 || note == 5'b10000 || counter <notes[note]) begin
+      if(note ==`OCT_LOW_P || note ==`OCT_MID_P|| note == `OCT_HGH_P || counter <notes[note]) begin
             counter <= counter + 1'b1;
         end else begin  
         if ((_mode !=`M_LEARN)||(_mode == `M_LEARN && play==1'b1)) begin
@@ -96,40 +91,40 @@ module Buzzer(
     end 
     always @(*) begin
         case(note) //shine specific led
-            5'd0: led = 7'b0000000;
-            5'd1: led = 7'b1000000;
-            5'd2: led = 7'b0100000;
-            5'd3: led = 7'b0010000;
-            5'd4: led = 7'b0001000;
-            5'd5: led = 7'b0000100;
-            5'd6: led = 7'b0000010;
-            5'd7: led = 7'b0000001;
-            5'd8: led = 7'b0000000;
-            5'd9: led = 7'b1000000;
-            5'd10: led = 7'b0100000;
-            5'd11: led = 7'b0010000;
-            5'd12: led = 7'b0001000;
-            5'd13: led = 7'b0000100;
-            5'd14: led = 7'b0000010;
-            5'd15: led = 7'b0000001;
-            5'd16: led = 7'b0000000;
-            5'd17: led = 7'b1000000;
-            5'd18: led = 7'b0100000;
-            5'd19: led = 7'b0010000;
-            5'd20: led = 7'b0001000;
-            5'd21: led = 7'b0000100;
-            5'd22: led = 7'b0000010;
-            5'd23: led = 7'b0000001;
-            5'd24: led = 7'b0000000;
-            5'd25: led = 7'b1000000;
-            5'd26: led = 7'b0100000;
-            5'd27: led = 7'b0010000;
-            5'd28: led = 7'b0001000;
-            5'd29: led = 7'b0000100;
-            5'd30: led = 7'b0000010;
-            5'd31: led = 7'b0000001;
-       
-            default: led = 7'b0000000;
+            5'd0: led = `nonled;
+            5'd1: led = `oneled;
+            5'd2: led = `twoled;
+            5'd3: led = `thrled;
+            5'd4: led = `forled;
+            5'd5: led = `fivled;
+            5'd6: led = `sixled;
+            5'd7: led = `sevled;
+            5'd8: led = `nonled;
+            5'd9: led = `oneled;
+            5'd10: led = `twoled;
+            5'd11: led = `thrled;
+            5'd12: led = `forled;
+            5'd13: led = `fivled;
+            5'd14: led = `sixled;
+            5'd15: led = `sevled;
+            5'd16: led = `nonled;
+            5'd17: led = `oneled;
+            5'd18: led = `twoled;
+            5'd19: led = `thrled;
+            5'd20: led = `forled;
+            5'd21: led = `fivled;
+            5'd22: led = `sixled;
+            5'd23: led = `sevled;
+            5'd24: led = `nonled;
+            5'd25: led = `oneled;
+            5'd26: led = `twoled;
+            5'd27: led = `thrled;
+            5'd28: led = `forled;
+            5'd29: led = `fivled;
+            5'd30: led = `sixled;
+            5'd31: led = `sevled;
+          
+            default: led = `nonled;
         endcase
     end
 

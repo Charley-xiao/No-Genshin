@@ -16,18 +16,6 @@ module sel_alter_manager (
     reg [6:0] last_sel;
     reg mrset;  // memorized reset
 
-    initial begin
-        last_sel = 7'b0;
-        has_played = 1'b0;
-        parser_table[0] = 6'b0;
-        parser_table[1] = 6'b0;
-        parser_table[2] = 6'b0;
-        parser_table[3] = 6'b0;
-        parser_table[4] = 6'b0;
-        parser_table[5] = 6'b0;
-        parser_table[6] = 6'b0;
-        cur_note = 3'b0;
-    end
 
     always @(*) begin
         // make parsed sels using parser table

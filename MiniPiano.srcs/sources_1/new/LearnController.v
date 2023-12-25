@@ -50,13 +50,13 @@ module LearnController (
     reg [4:0] keyToNote[129:0];
     reg [4:0] _note;  // Translated note value
     always @(*) begin
-        keyToNote[7'b0000001] = `DO + `OCT_MID_P;
-        keyToNote[7'b0000010] = `RE + `OCT_MID_P;
-        keyToNote[7'b0000100] = `MI + `OCT_MID_P;
-        keyToNote[7'b0001000] = `FA + `OCT_MID_P;
-        keyToNote[7'b0010000] = `SO + `OCT_MID_P;
-        keyToNote[7'b0100000] = `LA + `OCT_MID_P;
-        keyToNote[7'b1000000] = `SI + `OCT_MID_P;
+        keyToNote[`oneled] = `DO + `OCT_MID_P;
+        keyToNote[`twoled] = `RE + `OCT_MID_P;
+        keyToNote[`thrled] = `MI + `OCT_MID_P;
+        keyToNote[`forled] = `FA + `OCT_MID_P;
+        keyToNote[`fivled] = `SO + `OCT_MID_P;
+        keyToNote[`sixled] = `LA + `OCT_MID_P;
+        keyToNote[`sevled] = `SI + `OCT_MID_P;
     end
 
     // Index for the current note
@@ -129,7 +129,7 @@ module LearnController (
                      if (running && timer > 0) begin timer <= timer - 1; end
                         if (play) begin
                             play <= 0;
-                        end else if (note_played && sel == 7'b0000000) begin
+                        end else if (note_played && sel == `nonled) begin
                             score_added<=1'b0;
                             note_played <= 1'b0;  // Reset the flag once the selector is cleared
                             timer <= TIMER_MAX;
@@ -147,7 +147,7 @@ module LearnController (
                                 update_grade_flag <= 1'b1; 
                                     state <= RESULT;
                                 end
-                            end else if (sel != 7'b0000000) begin
+                            end else if (sel != `nonled) begin
                             running <= 0;
                                 // Check if the correct key is pressed
                                 if (keyToNote[sel] == _note) begin
