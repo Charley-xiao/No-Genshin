@@ -5,6 +5,7 @@ module AutoController (
     input clk,
     input [6:0] num,
     input [1:0] _mode,
+    input paused,
     output reg [4:0] note
 );
     reg mrset;  //memorized reset
@@ -34,7 +35,7 @@ module AutoController (
             i <= is;
             mrset <= rset;
         end
-        if (_mode == `M_AUTO) begin
+        if (_mode == `M_AUTO && paused == 0) begin
             if (counter == 0) begin
                 i <= is;
                 note <= pcs[i*5+:5];  // pieces with 5 as length

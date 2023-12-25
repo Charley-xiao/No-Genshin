@@ -67,4 +67,7 @@ set_property -dict {PACKAGE_PIN E7 IOSTANDARD LVCMOS33} [get_ports {blue[3]}]
 set_property PACKAGE_PIN D7 [get_ports hs]
 set_property PACKAGE_PIN C4 [get_ports vs]
 
+set_property PACKAGE_PIN F6 [get_ports pause_led]
+set_property PACKAGE_PIN P5 [get_ports paused]
+
 # set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets mode_IBUF[1]]
