@@ -11,6 +11,7 @@ module MiniPiano (
     input wire down,  //switch songs
     input wire user_switch,  //switch user
     input wire showaccount,  //show account message
+    input paused,
     output wire speaker,
     output wire md,
     output [6:0] led,
@@ -22,8 +23,10 @@ module MiniPiano (
     output [3:0] green,
     output [3:0] blue,  //vga
     output hs,
-    output vs
+    output vs,
+    output pause_led
 );
+    assign pause_led=paused;
     assign md = 1'b1;  // Set md to a constant 0 as it's currently not used
     wire play;  // Wire to indicate when a note should be played
     reg [4:0] note;  // Register to store the current note value
@@ -209,6 +212,7 @@ module MiniPiano (
         clk,
         num,
         _mode,
+        paused,
         noteAuto
     );
     LearnController learnController (
