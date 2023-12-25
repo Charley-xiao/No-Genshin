@@ -18,9 +18,6 @@ module debouncer (
         else if (delay_cnt > 0) delay_cnt <= delay_cnt - 1'b1;
         else delay_cnt <= 21'd0;
 
-    always @(posedge clk)
-        if (delay_cnt == 1'b1) k_value <= k_in;  //only change when already delayed
-        else k_value <= k_value;
 
     always @(posedge clk)
         if (delay_cnt == 1'b1 && k_in == 1) k_p_flag <= 1'b1;  //only change when already delayed

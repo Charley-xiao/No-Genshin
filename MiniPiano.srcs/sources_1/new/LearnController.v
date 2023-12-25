@@ -12,6 +12,7 @@ module LearnController (
     output reg [9:0] score,
     output reg play,
     output reg update_grade_flag,
+    output reg canc,
     output reg [1:0] grade
 );
 
@@ -64,6 +65,7 @@ module LearnController (
     always @(posedge clk) begin
         if (rset) begin
             // Reset state logic
+            
             i <= is;
             state <= IDLE;
             note_played <= 0;
@@ -117,9 +119,13 @@ module LearnController (
                             2'b11:   note_duration_counter <= `CNT_L_1_16;
                             default: note_duration_counter <= `CNT_L_1_16;
                         endcase
+                        if(is==i)begin canc<=1;end
+                        else begin canc<=0;end
                     end
                     // PLAY state: wait for user input and play the note
                     PLAY: begin
+                     if(is==i)begin canc<=1;end
+                           else begin canc<=0;end
                      if (running && timer > 0) begin timer <= timer - 1; end
                         if (play) begin
                             play <= 0;
@@ -197,6 +203,7 @@ module LearnController (
                                    update_grade_flag<=1'b0;
                                    end
                         score <= score;
+                        canc<=1;
                         // Reset to IDLE after the result is acknowledged
 
                     end

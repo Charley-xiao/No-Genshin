@@ -57,6 +57,7 @@ module MiniPiano (
     // account operation
     reg [3:0] current_user_id ;
     wire [7:0] _current_user_id;  // decimal ver
+    wire canc;
     reg [1:0] user_ratings[3:0];
     wire update_grade_flag;
     integer i;
@@ -66,8 +67,8 @@ module MiniPiano (
         end
         current_user_id = 0; // Initialize the current user ID
     end
-    always @(*) begin
-        if (user_ratings[current_user_id] > grade&&update_grade_flag==1'b1) begin
+    always @(posedge clk) begin
+     if (user_ratings[current_user_id] > grade&&update_grade_flag==1'b1) begin
             user_ratings[current_user_id] = grade;
         end
     end  //use showaccount control the view, (account id and grade) or (present score and id)
@@ -136,9 +137,11 @@ module MiniPiano (
         debounced_user_switch
     );
       always @(posedge debounced_user_switch) begin
+      if(canc==1'b1)begin
           current_user_id <= current_user_id + 1;
           if (current_user_id >= 4'b0011) begin  // when user id surpass max
               current_user_id <= 0;
+          end
           end
       end
 
@@ -228,6 +231,7 @@ module MiniPiano (
         score,
         play,
        update_grade_flag,
+       canc,
         grade
     );
 endmodule

@@ -35,7 +35,10 @@ module AutoController (
             i <= is;
             mrset <= rset;
         end
-        if (_mode == `M_AUTO && paused == 0) begin
+        if (_mode == `M_AUTO && paused == 1)begin
+        note<=0;
+        end  
+      else if (_mode == `M_AUTO && paused == 0) begin
             if (counter == 0) begin
                 i <= is;
                 note <= pcs[i*5+:5];  // pieces with 5 as length
@@ -55,6 +58,7 @@ module AutoController (
                 counter <= counter - 1;
                 if (counter < `AUTO_TIMEOUT) note <= 0;
             end
+            
         end
     end
 endmodule
