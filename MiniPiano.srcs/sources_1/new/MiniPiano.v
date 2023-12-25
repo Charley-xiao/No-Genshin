@@ -67,7 +67,7 @@ module MiniPiano (
         end
         current_user_id = 0; // Initialize the current user ID
     end
-    always @(posedge clk) begin
+    always @* begin
      if (user_ratings[current_user_id] > grade&&update_grade_flag==1'b1) begin
             user_ratings[current_user_id] = grade;
         end

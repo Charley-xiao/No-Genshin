@@ -34,6 +34,7 @@ module LearnController (
     wire [700:0] pcs;
     wire [300:0] len;
     wire [7:0] is;
+    reg [7:0] isnew;
     wire [2:0] scal;
 
     // Instantiate the library module
@@ -65,8 +66,7 @@ module LearnController (
     always @(posedge clk) begin
         if (rset) begin
             // Reset state logic
-            
-            i <= is;
+           isnew<=is-7'd20;
             state <= IDLE;
             note_played <= 0;
             score_added <= 0;
@@ -79,7 +79,7 @@ module LearnController (
         end else if (_mode == `M_LEARN) begin
             // If the selected song has changed, reset to prepare the new song
             if (prevnum != num) begin
-                i <= is;
+                isnew<=is-7'd20;
                 prevnum <= num;
                 score <= 0;
                 note_duration_counter <= NOTE_DURATION;
@@ -94,7 +94,7 @@ module LearnController (
             end else begin
                 case (state)
                     IDLE: begin
-                        i <= is;
+                        i <= isnew;
                         prevnum <= num;
                         score <= 0;
                         score_added<=0;
@@ -119,12 +119,12 @@ module LearnController (
                             2'b11:   note_duration_counter <= `CNT_L_1_16;
                             default: note_duration_counter <= `CNT_L_1_16;
                         endcase
-                        if(is==i)begin canc<=1;end
+                        if(isnew==i)begin canc<=1;end
                         else begin canc<=0;end
                     end
                     // PLAY state: wait for user input and play the note
                     PLAY: begin
-                     if(is==i)begin canc<=1;end
+                     if(isnew==i)begin canc<=1;end
                            else begin canc<=0;end
                      if (running && timer > 0) begin timer <= timer - 1; end
                         if (play) begin
@@ -191,16 +191,16 @@ module LearnController (
                     // RESULT state: display the result and wait for user action
                     RESULT: begin
                     if( update_grade_flag==1'b1)begin
-                     if (score > is * 4) begin
+                     if (score > isnew * 4) begin
                                        grade <= `G_S; // S grade
-                                   end else if (score> is * 3) begin
+                                   end else if (score> isnew * 3) begin
                                        grade <= `G_A; // A grade
-                                   end else if (score > is* 2) begin
+                                   end else if (score > isnew* 2) begin
                                        grade <= `G_B; // B grade
                                    end else begin
                                        grade <= `G_C; // C grade
                                    end
-                                   update_grade_flag<=1'b0;
+                                    update_grade_flag<=1'b0;
                                    end
                         score <= score;
                         canc<=1;
