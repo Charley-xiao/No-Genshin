@@ -11,6 +11,7 @@ module LearnController (
     output reg [4:0] note,
     output reg [9:0] score,
     output reg play,
+    output reg update_grade_flag,
     output reg [1:0] grade
 );
 
@@ -27,7 +28,6 @@ module LearnController (
     reg [31:0] prevnum;
     reg note_played;  // Indicates if the current note has been played
     reg score_added;  // Ensures score is only added once
-    reg mrset;  // Master reset tracking
     reg [31:0] timer;
     reg running;
     wire [700:0] pcs;
@@ -59,16 +59,10 @@ module LearnController (
 
     // Index for the current note
     integer i,j;
-    initial begin
-        mrset   = 1'b1;
-        prevnum = 0;
-        timer = TIMER_MAX;
-        running = 0;
-    end
 
     // Main learning mode state machine
     always @(posedge clk) begin
-        if (rset ) begin
+        if (rset) begin
             // Reset state logic
             i <= is;
             state <= IDLE;
@@ -94,6 +88,7 @@ module LearnController (
                 timer <= TIMER_MAX; // Reset the timer
                 running <= 0; // Stop the timer
                  grade <= `G_C; // C grade
+                  update_grade_flag <= 1'b0;
             end else begin
                 case (state)
                     IDLE: begin
@@ -106,6 +101,7 @@ module LearnController (
                         timer <= TIMER_MAX;
                         running <= 0;
                         grade <= `G_C; // C grade
+                         update_grade_flag <= 1'b0;
                     end
                     // READY state: prepare to play the note
                     READY: begin
@@ -142,6 +138,7 @@ module LearnController (
                                     i <= i - 1;
                                     state <= READY;
                                 end else begin
+                                update_grade_flag <= 1'b1; 
                                     state <= RESULT;
                                 end
                             end else if (sel != 7'b0000000) begin
@@ -172,6 +169,7 @@ module LearnController (
                                               else score <= score + `STD_4_S;
                                           score_added <= 1; // Mark score as added
                                                    end
+                                             update_grade_flag <= 1'b1; 
                                             state <= RESULT;  // No more notes, show result
                                         end
                                     end
@@ -186,6 +184,7 @@ module LearnController (
                     end
                     // RESULT state: display the result and wait for user action
                     RESULT: begin
+                    if( update_grade_flag==1'b1)begin
                      if (score > is * 4) begin
                                        grade <= `G_S; // S grade
                                    end else if (score> is * 3) begin
@@ -194,6 +193,8 @@ module LearnController (
                                        grade <= `G_B; // B grade
                                    end else begin
                                        grade <= `G_C; // C grade
+                                   end
+                                   update_grade_flag<=1'b0;
                                    end
                         score <= score;
                         // Reset to IDLE after the result is acknowledged

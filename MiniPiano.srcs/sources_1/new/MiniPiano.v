@@ -55,14 +55,16 @@ module MiniPiano (
     reg [3:0] current_user_id ;
     wire [7:0] _current_user_id;  // decimal ver
     reg [1:0] user_ratings[3:0];
+    wire update_grade_flag;
     integer i;
-   initial begin
-   for(i=0;i<4;i=i+1)begin
-    user_ratings[current_user_id]=`G_C;
+    initial begin
+        for (i = 0; i < 4; i = i + 1) begin
+            user_ratings[i] = `G_C; // Assume `G_C` is the lowest grade
+        end
+        current_user_id = 0; // Initialize the current user ID
     end
-    end
-    always @(grade) begin
-        if (user_ratings[current_user_id] > grade) begin
+    always @(*) begin
+        if (user_ratings[current_user_id] > grade&&update_grade_flag==1'b1) begin
             user_ratings[current_user_id] = grade;
         end
     end  //use showaccount control the view, (account id and grade) or (present score and id)
@@ -221,6 +223,7 @@ module MiniPiano (
         noteLearn,
         score,
         play,
+       update_grade_flag,
         grade
     );
 endmodule
