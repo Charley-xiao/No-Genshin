@@ -38,8 +38,6 @@ module MiniPiano (
     wire [4:0] noteAlter;
     reg [6:0] num;  //store the number of the musical piece
     reg [2:0] scale;  //  store the scale information
-    integer MAX_PIECES = 3'b100;
-    integer MAX_SCALE = 3'b011;
     wire [6:0] parsed_sel;  // Wire to carry the parsed selection input
 
     wire rset_n;
@@ -95,10 +93,6 @@ module MiniPiano (
         seg_out1,
         tub_sel1
     );
-    initial begin
-        num   = 0;
-        scale = 3'b000;
-    end
 
     //debouncers
     wire debounced_down;
@@ -142,16 +136,16 @@ module MiniPiano (
     always @(debounced_butscale) begin
         if (debounced_butscale == 1'b1) begin
             scale = scale + 1'b1;
-            if (scale >= MAX_SCALE) scale = 3'b000;
+            if (scale >= `MAX_SCALE) scale = 3'b000;
         end
     end
 
     // change currect music
     always @(posedge clk) begin
         if (debounced_up) begin
-            num <= (num >= MAX_PIECES - 1) ? 0 : num + 1;
+            num <= (num >= `MAX_PIECES - 1) ? 0 : num + 1;
         end else if (debounced_down) begin
-            num <= (num == 0) ? MAX_PIECES - 1 : num - 1;
+            num <= (num == 0) ? `MAX_PIECES - 1 : num - 1;
             
         end
     end
@@ -220,7 +214,6 @@ module MiniPiano (
         num,
         _mode,
         parsed_sel,
-        current_user_id,
         noteLearn,
         score,
         play,

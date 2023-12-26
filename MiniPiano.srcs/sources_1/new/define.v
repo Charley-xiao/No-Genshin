@@ -4,6 +4,13 @@
 `define M_LEARN 2'b01
 `define M_ALTER 2'b00
 
+//Volume
+`define MAX_PIECES  3'b100
+`define MAX_SCALE  3'b011
+  
+ // State machine parameters 
+`define NOTE_DURATION 80000000;  // Assume each note lasts this duration
+`define TIMER_MAX 100000000;     // 1 second on a 100MHz clock
 //LED
 `define nonled 7'b0000000
 `define oneled 7'b1000000

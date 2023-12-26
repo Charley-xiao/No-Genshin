@@ -5,16 +5,14 @@ module debouncer (
     input k_in,
     output wire k_out
 );
-    reg k_value;
     reg k_p_flag;
     reg k_reg;
     reg [20:0] delay_cnt;
-    parameter delay_param = `DEB_DELAY;  //max delay time
 
     always @(posedge clk) k_reg <= k_in;
 
     always @(posedge clk)
-        if (k_in != k_reg) delay_cnt <= delay_param;
+        if (k_in != k_reg) delay_cnt <= `DEB_DELAY;//set delay time
         else if (delay_cnt > 0) delay_cnt <= delay_cnt - 1'b1;
         else delay_cnt <= 21'd0;
 

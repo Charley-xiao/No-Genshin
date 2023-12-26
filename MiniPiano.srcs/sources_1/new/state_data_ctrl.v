@@ -10,17 +10,17 @@ module state_data_ctrl (
             data <= 6'b11_1110;  //reset, all zero
         end else begin
             case (mode)
-                2'b01: begin
+               `M_LEARN: begin
                     data <= 36'b111110_111110_111110_010101_010111_111110;  //LEARN              
                 end
-                2'b10: begin
+                `M_AUTO: begin
                     data <= 36'b111110_001010_011110_011101_011000_111110;  //AUTO
                 end
-                2'b11: begin
+               `M_IN: begin
                     data <= 36'b111110_111110_111110_010010_010111_111110;  //IN
                 end
-                default: begin
-                    data <= 36'b111110_111110_111110_111110_111110_111110;  //blank
+                 `M_ALTER: begin
+                    data <= 36'b111110_001010_010101_011101_111110_111110;  //ALT
                 end
             endcase
         end

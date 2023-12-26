@@ -6,7 +6,7 @@ module name_data_ctrl (
     output reg [59:0] data
 );
     always @(posedge clk, negedge rst) begin
-        if (!rst | mode == `M_IN) begin
+        if (!rst | mode == `M_IN | mode==`M_ALTER) begin
             data <= 60'b111110_111110_111110_111110_111110_111110_111110_111110_111110_111110; //reset, all zero
         end else begin
             case (num)
