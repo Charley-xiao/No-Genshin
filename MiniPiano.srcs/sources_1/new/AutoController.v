@@ -8,6 +8,7 @@ module AutoController (
     input paused,
     output reg [4:0] note
 );
+
     reg [6:0] prenum;
     wire [700:0] pcs;  //pieces
     wire [300:0] len;  //length of pieces
@@ -28,7 +29,7 @@ module AutoController (
     );
 
     always @(posedge clk) begin
-        if (prenum != num&&_mode== `M_AUTO ) begin
+        if ((prenum != num||rset)&&_mode== `M_AUTO ) begin
             prenum <=num;
             i <= is;
         end else begin
