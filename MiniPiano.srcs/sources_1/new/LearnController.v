@@ -7,7 +7,6 @@ module LearnController (
     input [6:0] num,
     input [1:0] _mode,
     input [6:0] sel,
-    input [3:0] user_id, // new input:the current id of user
     output reg [4:0] note,
     output reg [9:0] score,
     output reg play,
@@ -28,7 +27,6 @@ module LearnController (
     reg [31:0] note_duration_counter;
     reg [31:0] prevnum;
     reg note_played;  // Indicates if the current note has been played
-    reg score_added;  // Ensures score is only added once
     reg [31:0] timer;
     reg running;
     wire [700:0] pcs;
@@ -49,27 +47,26 @@ module LearnController (
     reg [4:0] keyToNote[129:0];
     reg [4:0] _note;  // Translated note value
     always @(*) begin
-        keyToNote[`oneled] = `DO + `OCT_MID_P;
-        keyToNote[`twoled] = `RE + `OCT_MID_P;
-        keyToNote[`thrled] = `MI + `OCT_MID_P;
-        keyToNote[`forled] = `FA + `OCT_MID_P;
-        keyToNote[`fivled] = `SO + `OCT_MID_P;
-        keyToNote[`sixled] = `LA + `OCT_MID_P;
-        keyToNote[`sevled] = `SI + `OCT_MID_P;
+            keyToNote[7'b0000001] = `DO + `OCT_MID_P;
+           keyToNote[7'b0000010] = `RE + `OCT_MID_P;
+           keyToNote[7'b0000100] = `MI + `OCT_MID_P;
+           keyToNote[7'b0001000] = `FA + `OCT_MID_P;
+           keyToNote[7'b0010000] = `SO + `OCT_MID_P;
+           keyToNote[7'b0100000] = `LA + `OCT_MID_P;
+           keyToNote[7'b1000000] = `SI + `OCT_MID_P;
     end
 
     // Index for the current note
-    integer i,j;
+    integer i;
 
     // Main learning mode state machine
     always @(posedge clk) begin
         if (rset) begin
             // Reset state logic
-            
+              update_grade_flag<=1'b1;
             i <= is;
             state <= IDLE;
             note_played <= 0;
-            score_added <= 0;
             score <= 0;
             note_duration_counter <= NOTE_DURATION;
             play <= 0;
@@ -84,26 +81,15 @@ module LearnController (
                 score <= 0;
                 note_duration_counter <= NOTE_DURATION;
                 note_played <= 0;
-                score_added <= 0;
                 play <= 0;
                 state <= IDLE;
                 timer <= TIMER_MAX; // Reset the timer
                 running <= 0; // Stop the timer
                  grade <= `G_C; // C grade
-                  update_grade_flag <= 1'b0;
             end else begin
                 case (state)
-                    IDLE: begin
-                        i <= is;
-                        prevnum <= num;
-                        score <= 0;
-                        score_added<=0;
+                    IDLE: begin                   
                         state <= READY;
-                        note_played <= 0;
-                        timer <= TIMER_MAX;
-                        running <= 0;
-                        grade <= `G_C; // C grade
-                         update_grade_flag <= 1'b0;
                     end
                     // READY state: prepare to play the note
                     READY: begin
@@ -129,8 +115,7 @@ module LearnController (
                      if (running && timer > 0) begin timer <= timer - 1; end
                         if (play) begin
                             play <= 0;
-                        end else if (note_played && sel == `nonled) begin
-                            score_added<=1'b0;
+                        end else if (note_played && sel == 7'b0000000) begin
                             note_played <= 1'b0;  // Reset the flag once the selector is cleared
                             timer <= TIMER_MAX;
                             running <= 1;
@@ -147,7 +132,7 @@ module LearnController (
                                 update_grade_flag <= 1'b1; 
                                     state <= RESULT;
                                 end
-                            end else if (sel != `nonled) begin
+                            end else if (sel != 7'b0000000) begin
                             running <= 0;
                                 // Check if the correct key is pressed
                                 if (keyToNote[sel] == _note) begin
@@ -156,33 +141,26 @@ module LearnController (
                                         note_duration_counter <= note_duration_counter - 1;
                                     end else begin
                                         play <= 1'b0;  // Stop playing the note
-                                        note_played <= 1;  // Mark the note as played
+                                        note_played <= 1'b1;  // Mark the note as played
                                         if (i > 0) begin
-                                              if (!score_added) begin
                                               if (timer > `STD_1) score <= score + `STD_1_S;
                                               else if (timer > `STD_2) score <= score + `STD_2_S;
                                               else if (timer > `STD_3) score <= score + `STD_3_S;
                                               else score <= score + `STD_4_S;
-                                              score_added <= 1; // Mark score as added
-                                             end
                                             i <= i - 1;  // Prepare the next note
                                             state <= READY;
                                         end else begin
-                                               if (!score_added) begin
                                               if (timer > `STD_1) score <= score + `STD_1_S;
                                               else if (timer > `STD_2) score <= score + `STD_2_S;
                                               else if (timer > `STD_3) score <= score + `STD_3_S;
-                                              else score <= score + `STD_4_S;
-                                          score_added <= 1; // Mark score as added
-                                                   end
+                                              else score <= score + `STD_4_S;  
                                              update_grade_flag <= 1'b1; 
                                             state <= RESULT;  // No more notes, show result
                                         end
                                     end
                                 end else begin
                                     // Incorrect key pressed, could add light flashing etc.
-                                        play <= 1'b0; 
-                                        score_added<=0;                                   
+                                        play <= 1'b0;                            
                                         state <= READY; 
                                 end
                             end
@@ -201,9 +179,9 @@ module LearnController (
                                        grade <= `G_C; // C grade
                                    end
                                    update_grade_flag<=1'b0;
+                                    canc<=1;
                                    end
                         score <= score;
-                        canc<=1;
                         // Reset to IDLE after the result is acknowledged
 
                     end
@@ -214,9 +192,10 @@ module LearnController (
     // Update the note when not in learning mode or when a note has been played
     always @(posedge clk) begin
         if (_mode == `M_LEARN) begin
-            note <= pcs[i*5+:5];
             if (state == RESULT) begin
                 note <= 0;
+            end else begin
+            note <= pcs[i*5+:5];
             end
         end else begin
             note <= 0;

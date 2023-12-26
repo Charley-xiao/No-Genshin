@@ -15,8 +15,7 @@ module sel_alter_manager (
     reg has_played;
     reg [6:0] last_sel;
     reg mrset;  // memorized reset
-
-
+  reg [7:0] isnew;
     always @(*) begin
         // make parsed sels using parser table
         case (sel)

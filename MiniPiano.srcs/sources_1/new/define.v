@@ -82,7 +82,7 @@
 `define OCT_HGH_P 5'b10000
 
 // grades
-`define G_S 2'b11
-`define G_A 2'b10
-`define G_B 2'b01
-`define G_C 2'b00
+`define G_S 2'b00
+`define G_A 2'b01
+`define G_B 2'b10
+`define G_C 2'b11

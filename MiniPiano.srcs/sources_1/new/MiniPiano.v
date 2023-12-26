@@ -53,17 +53,12 @@ module MiniPiano (
     wire [11:0] _score;
 
     // account operation
-    reg [3:0] current_user_id ;
+    reg [2:0] current_user_id ;
     wire [7:0] _current_user_id;  // decimal ver
     wire canc;
     reg [1:0] user_ratings[3:0];
     wire update_grade_flag;
     integer i;
-    always @* begin
-     if (user_ratings[current_user_id] > grade&&update_grade_flag==1'b1) begin
-            user_ratings[current_user_id] = grade;
-        end
-    end  //use showaccount control the view, (account id and grade) or (present score and id)
 
     hex_to_decimal conv_score (
         score,
@@ -74,15 +69,6 @@ module MiniPiano (
         _current_user_id
     );
 
-    light_val_controller ctrl_val (
-        _mode,
-        num,
-        _score,
-        cur_note_alter,
-        user_ratings[current_user_id],
-        _current_user_id,
-                val_7seg
-    );
     light_7seg_manager manager_7seg (
         val_7seg,
         seg_rset,
@@ -93,7 +79,17 @@ module MiniPiano (
         seg_out1,
         tub_sel1
     );
-
+ initial begin
+           for (i = 1'b0; i <= 2'b11; i = i + 1'b1) begin
+               user_ratings[i] = `G_C; // Assume `G_C` is the lowest grade
+           end
+           current_user_id = 2'b0; // Initialize the current user ID
+       end
+always @* begin
+     if ((user_ratings[current_user_id] >grade)&&update_grade_flag==1'b1) begin
+               user_ratings[current_user_id] = grade;
+           end
+       end 
     //debouncers
     wire debounced_down;
     wire debounced_up;
@@ -139,7 +135,15 @@ module MiniPiano (
             if (scale >= `MAX_SCALE) scale = 3'b000;
         end
     end
-
+    light_val_controller ctrl_val (
+        _mode,
+        num,
+        _score,
+        cur_note_alter,
+        user_ratings[current_user_id],
+        _current_user_id,
+                val_7seg
+    );
     // change currect music
     always @(posedge clk) begin
         if (debounced_up) begin

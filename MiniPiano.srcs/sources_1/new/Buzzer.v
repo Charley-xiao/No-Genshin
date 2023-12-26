@@ -72,6 +72,9 @@ module Buzzer(
     //B6
     assign Cnotes[31] =50628;assign Fnotes[31]=151685;assign Bnotes[31]=143177;
     
+        initial begin
+            pwm = 0;
+        end
     integer i;
     always @(posedge clk) begin
        case(scale)
