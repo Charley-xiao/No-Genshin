@@ -79,6 +79,12 @@ module MiniPiano (
         seg_out1,
         tub_sel1
     );
+    initial begin
+        for (i = 1'b0; i <= 2'b11; i = i + 1'b1) begin
+            user_ratings[i] = `G_C;  // Assume `G_C` is the lowest grade
+        end
+        current_user_id = 2'b0;  // Initialize the current user ID
+    end
     always @* begin
         if ((user_ratings[current_user_id] > grade) && update_grade_flag == 1'b1) begin
             user_ratings[current_user_id] = grade;
