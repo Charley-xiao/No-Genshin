@@ -16,12 +16,12 @@ module LearnController (
 );
 
     // State machine parameters
-    parameter IDLE = 2'b00;
-    parameter READY = 2'b01;
-    parameter PLAY = 2'b10;
-    parameter RESULT = 2'b11;
-    parameter NOTE_DURATION = 80000000;  // Assume each note lasts this duration
-    parameter TIMER_MAX = 100000000;     // 1 second on a 100MHz clock
+    parameter IDLE = `IDLE;
+    parameter READY = `READY;
+    parameter PLAY =   `PLAY;
+    parameter RESULT = `RESULT;
+    parameter NOTE_DURATION = `NOTE_DURATION;  // Assume each note lasts this duration
+    parameter TIMER_MAX = `TIMER_MAX;     // 1 second on a 100MHz clock
     // Registers and wires
     reg [1:0] state;
     reg [31:0] note_duration_counter;
@@ -58,12 +58,11 @@ module LearnController (
 
     // Index for the current note
     integer i;
-
     // Main learning mode state machine
     always @(posedge clk) begin
         if (rset) begin
             // Reset state logic
-              update_grade_flag<=1'b1;
+            update_grade_flag<=1'b1;
             i <= is;
             state <= IDLE;
             note_played <= 0;
@@ -112,7 +111,9 @@ module LearnController (
                     PLAY: begin
                      if(is==i)begin canc<=1;end
                            else begin canc<=0;end
-                     if (running && timer > 0) begin timer <= timer - 1; end
+                     if (running && timer > 0) begin
+                      timer <= timer - 1; 
+                      end
                         if (play) begin
                             play <= 0;
                         end else if (note_played && sel == 7'b0000000) begin
@@ -183,7 +184,6 @@ module LearnController (
                                    end
                         score <= score;
                         // Reset to IDLE after the result is acknowledged
-
                     end
                 endcase
             end
