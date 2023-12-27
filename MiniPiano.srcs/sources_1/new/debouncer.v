@@ -12,7 +12,7 @@ module debouncer (
     always @(posedge clk) k_reg <= k_in;
 
     always @(posedge clk)
-        if (k_in != k_reg) delay_cnt <= `DEB_DELAY;//set delay time
+        if (k_in != k_reg) delay_cnt <= `DEB_DELAY;  //set delay time
         else if (delay_cnt > 0) delay_cnt <= delay_cnt - 1'b1;
         else delay_cnt <= 21'd0;
 

@@ -24,7 +24,7 @@ module light_val_controller (
             if (grade == `G_B) val_7seg[31:28] = 4'hb;
             if (grade == `G_C) val_7seg[31:28] = 4'hc;
         end else if (_mode == `M_ALTER) begin
-            val_7seg[3:0] = cur_note_alter;
+            val_7seg[3:0]  = cur_note_alter;
             val_7seg[31:4] = 28'hfffffff;
         end else begin
             val_7seg = 32'hffffffff;  //nothing to show then

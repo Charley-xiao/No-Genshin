@@ -14,7 +14,7 @@ module char_set (
 );
 
     always @(posedge clk or negedge rst) begin
-        if (!rst) begin // reset, all zero
+        if (!rst) begin  // reset, all zero
             col0 <= 8'b0000_0000;
             col1 <= 8'b0000_0000;
             col2 <= 8'b0000_0000;
@@ -23,7 +23,7 @@ module char_set (
             col5 <= 8'b0000_0000;
             col6 <= 8'b0000_0000;
         end else begin
-            case (data) // output what them look like
+            case (data)  // output what them look like
                 6'b00_0000: // "0"
 							begin
                     col0 <= 8'b0000_0000;

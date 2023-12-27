@@ -26,7 +26,7 @@ module MiniPiano (
     output vs,
     output pause_led
 );
-    assign pause_led=paused;
+    assign pause_led = paused;
     assign md = 1'b1;  // Set md to a constant 0 as it's currently not used
     wire play;  // Wire to indicate when a note should be played
     reg [4:0] note;  // Register to store the current note value
@@ -53,7 +53,7 @@ module MiniPiano (
     wire [11:0] _score;
 
     // account operation
-    reg [2:0] current_user_id ;
+    reg [2:0] current_user_id;
     wire [7:0] _current_user_id;  // decimal ver
     wire canc;
     reg [1:0] user_ratings[3:0];
@@ -79,27 +79,21 @@ module MiniPiano (
         seg_out1,
         tub_sel1
     );
- initial begin
-           for (i = 1'b0; i <= 2'b11; i = i + 1'b1) begin
-               user_ratings[i] = `G_C; // Assume `G_C` is the lowest grade
-           end
-           current_user_id = 2'b0; // Initialize the current user ID
-       end
-always @* begin
-     if ((user_ratings[current_user_id] >grade)&&update_grade_flag==1'b1) begin
-               user_ratings[current_user_id] = grade;
-           end
-       end 
+    always @* begin
+        if ((user_ratings[current_user_id] > grade) && update_grade_flag == 1'b1) begin
+            user_ratings[current_user_id] = grade;
+        end
+    end
     //debouncers
     wire debounced_down;
     wire debounced_up;
     wire debounced_butscale;
     wire debounced_user_switch;
-       debouncer rsett (
-         clk,
-         rset,
-         debounced_rset
-     );
+    debouncer rsett (
+        clk,
+        rset,
+        debounced_rset
+    );
     debouncer d1 (
         clk,
         up,
@@ -120,14 +114,14 @@ always @* begin
         user_switch,
         debounced_user_switch
     );
-      always @(posedge debounced_user_switch) begin
-      if(canc==1'b1)begin
-          current_user_id <= current_user_id + 1;
-          if (current_user_id >= 4'b0011) begin  // when user id surpass max
-              current_user_id <= 0;
-          end
-          end
-      end
+    always @(posedge debounced_user_switch) begin
+        if (canc == 1'b1) begin
+            current_user_id <= current_user_id + 1;
+            if (current_user_id >= 4'b0011) begin  // when user id surpass max
+                current_user_id <= 0;
+            end
+        end
+    end
 
     always @(debounced_butscale) begin
         if (debounced_butscale == 1'b1) begin
@@ -142,7 +136,7 @@ always @* begin
         cur_note_alter,
         user_ratings[current_user_id],
         _current_user_id,
-                val_7seg
+        val_7seg
     );
     // change currect music
     always @(posedge clk) begin
@@ -150,7 +144,7 @@ always @* begin
             num <= (num >= `MAX_PIECES - 1) ? 0 : num + 1;
         end else if (debounced_down) begin
             num <= (num == 0) ? `MAX_PIECES - 1 : num - 1;
-            
+
         end
     end
 
@@ -205,7 +199,7 @@ always @* begin
         noteIn
     );  //add scale or not
     AutoController autoController (
-         debounced_rset,
+        debounced_rset,
         clk,
         num,
         _mode,
@@ -213,7 +207,7 @@ always @* begin
         noteAuto
     );
     LearnController learnController (
-         debounced_rset,
+        debounced_rset,
         clk,
         num,
         _mode,
@@ -221,8 +215,8 @@ always @* begin
         noteLearn,
         score,
         play,
-       update_grade_flag,
-       canc,
+        update_grade_flag,
+        canc,
         grade
     );
 endmodule
