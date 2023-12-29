@@ -399,7 +399,7 @@
 在`LearnController`即学习模式下，`score`用于保存当前的分数，`update_grade_flag`用于更新评级，`grade`用于保存当前的评级，`grade`与`score`的对应关系也与乐曲长度有关，具体计算公式如下：
 
 $$
-grade=\begin{cases}S&,score\geq 4\times len\\A&,4\times len>score\geq 3\times len\\B&,3\times len>score\geq 2\times len\\C&,otherwise\end{cases}
+grade=\begin{cases}S&,score\geq 4\times len\\ A&,4\times len>score\geq 3\times len\\ B&,3\times len>score\geq 2\times len\\ C&,otherwise\end{cases}
 $$
 
 ### VGA
