@@ -56,7 +56,7 @@
 
 **输入输出**介绍如下：
 
-![image-20231225232959413](Project.assets/image-20231225232959413.png)
+![image-20231226123909338](Project.assets/image-20231226123909338.png)
 
 **顶层端口**如下：
 | Port name   | Direction | Type       | Description          |
@@ -95,7 +95,7 @@
 
 ### 顶层模块：MiniPiano
 
-![image-20231225000929454](Project.assets/image-20231225000929454.png)
+![b4aae19581b86de61e935bb7efea467a](Project.assets/b4aae19581b86de61e935bb7efea467a.png)
 
 内部直接实现子模块实例：
 
@@ -384,7 +384,9 @@
 
 ### VGA
 
-# TODO
+在这一模块中，我们提供了VGA的输出，包括当前模式的静态信息，以及当前音符和当前歌曲的动态信息。在自动模式下，音符信息随着自动播放进程推进自动播放；在学习模式下，可以用于提示具体的按键，以及其合适的进入、离开时间。
+
+在这里，每个字符位由一个`char_set`模块控制，并由`state_data_control`、`note_data_control`、`name_data_control`三个模块分别控制其输出指定的信息。最后，运行两个循环来维护`hs`和`vs`，即`horizontal_sync`与`vertical_sync`扫描信号，在有字符的部分维护`r`，`g`，`b`三个通道的输出达成显示字符的目的。
 
 ### 暂停和重启（自定义Bonus）
 
